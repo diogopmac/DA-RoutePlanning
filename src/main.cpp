@@ -1,4 +1,5 @@
 #include <iostream>
+#include "../headers/Graph.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
