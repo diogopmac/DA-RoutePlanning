@@ -10,10 +10,11 @@ void Menu() {
     int option;
 
     do {
-        cout << "Route Planner" << endl;
-        cout << "1 - Load" << endl;
-        cout << "2 - Show map" << endl;
-        cout << "3 - Leave" << endl;
+        cout << "\nIndividual Route Planning Tool\n"
+                "Desenho de Algoritmos 2025\n"
+                "[1] Load Map\n"
+                "[2] Show Map\n"
+                "[3] Leave application\n" << endl;
         cin >> option;
         switch (option) {
             case 1:
