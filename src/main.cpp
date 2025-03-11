@@ -1,8 +1,8 @@
 #include <iostream>
 #include "../headers/Graph.h"
+#include "../headers/Menu.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    std::cout << "Test" << std::endl;
+    Menu();
     return 0;
 }
