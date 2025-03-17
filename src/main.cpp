@@ -5,13 +5,14 @@
 
 int main(int argc , char *argv[]) {
     Graph<int> *graph;
+    Menu menu;
     if (argc == 3) {
         const std::string inFile = argv[1];
         const std::string outFile = argv[2];
-        MenuBatchMode("../input.txt", "../output.txt");
+        menu.MenuBatchMode("../input.txt", "../output.txt");
     }
     else {
-        Menu();
+        menu.DefaultMenu();
     }
     return 0;
 }

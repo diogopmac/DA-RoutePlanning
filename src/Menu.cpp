@@ -8,7 +8,9 @@
 
 using namespace std;
 
-void Menu() {
+Menu::Menu() = default;
+
+void Menu::DefaultMenu() {
     int option;
 
     do {
@@ -34,7 +36,7 @@ void Menu() {
     } while (option != 3);
 }
 
-void MenuBatchMode(const string& inFile, const string& outFile) {
+void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     ifstream input(inFile);
     if(!input) {
         cerr << "Error opening file " << inFile << endl;

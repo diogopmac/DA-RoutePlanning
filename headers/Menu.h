@@ -7,7 +7,13 @@
 #include "Graph.h"
 #include <string>
 
-void Menu();
-void MenuBatchMode(const std::string& inFile, const std::string& outFile);
+class Menu {
+    public:
+        Menu();
+        void DefaultMenu();
+        void MenuBatchMode(const std::string& inFile, const std::string& outFile);
+};
+
+
 
 #endif //MENU_H
