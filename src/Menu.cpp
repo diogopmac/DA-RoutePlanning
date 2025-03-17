@@ -3,10 +3,14 @@
 //
 #include "../headers/Menu.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-void Menu() {
+Menu::Menu() = default;
+
+void Menu::DefaultMenu() {
     int option;
 
     do {
@@ -30,4 +34,40 @@ void Menu() {
                 cout << "Invalid Input!" << endl;
         }
     } while (option != 3);
+}
+
+void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
+    ifstream input(inFile);
+    if(!input) {
+        cerr << "Error opening file " << inFile << endl;
+        exit(1);
+    }
+    ofstream output(outFile);
+    if(!output) {
+        cerr << "Error opening file " << outFile << endl;
+        exit(1);
+    }
+
+    string line;
+    while(getline(input, line)) {
+        istringstream iss(line);
+
+        string discriminant, value;
+
+        getline(iss, discriminant, ':');
+        getline(iss, value);
+
+        if (discriminant == "Mode") {
+            // TODO
+        }
+        else if (discriminant == "Source") {
+            // TODO
+        }
+        else if (discriminant == "Destination") {
+            // TODO
+        }
+
+    }
+    input.close();
+    output.close();
 }
