@@ -6,12 +6,15 @@
 #include <fstream>
 #include <sstream>
 
+#include "../headers/DataReader.h"
+
 using namespace std;
 
 Menu::Menu() = default;
 
 void Menu::DefaultMenu() {
     int option;
+    DataReader reader = DataReader();
 
     do {
         cout << "\nIndividual Route Planning Tool\n"
@@ -22,7 +25,7 @@ void Menu::DefaultMenu() {
         cin >> option;
         switch (option) {
             case 1:
-                cout << "WIP" << endl;
+                reader.readLocations("../docs/Locations.csv");
                 break;
             case 2:
                 cout << "WIP" << endl;
