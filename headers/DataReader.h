@@ -5,7 +5,7 @@
 #ifndef DATAREADER_H
 #define DATAREADER_H
 #include <string>
-#include "Graph.h"
+#include "graph.h"
 
 class DataReader {
     public:

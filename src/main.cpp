@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "../headers/Graph.h"
+#include "../headers/graph.h"
 #include "../headers/Menu.h"
 
 int main(int argc , char *argv[]) {

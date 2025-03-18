@@ -4,7 +4,7 @@
 
 #ifndef MENU_H
 #define MENU_H
-#include "Graph.h"
+#include "graph.h"
 #include "DataReader.h"
 #include <string>
 
