@@ -14,6 +14,7 @@ DataReader::~DataReader() {}
 
 
 void DataReader::readLocations(const std::string& fileName, Graph<int>& graph) {
+
     ifstream file(fileName);
     if (!file) {
         cerr << "Error opening file " << fileName << endl;
@@ -27,35 +28,58 @@ void DataReader::readLocations(const std::string& fileName, Graph<int>& graph) {
     string line;
     getline(file, line);
 
-    char delimiter = ',';
-
     while (getline(file, line)) {
         istringstream iss(line);
 
-        getline(iss, name, delimiter);
-        getline(iss, idStr, delimiter);
-        getline(iss, code, delimiter);
+        getline(iss, name, ',');
+        getline(iss, idStr, ',');
+        getline(iss, code, ',');
         getline(iss, parkingStr, '\r');
 
         id = stoi(idStr);
         parking = parkingStr == "1";
 
-        cout << "name: " << name << endl;
-        cout << "id: " << id << endl;
-        cout << "code: " << code << endl;
-        cout << "parking: " << (parking ? "Yes" : "No") << endl;
-        cout << endl;
-
         graph.addVertex(name, id, code, parking);
     }
-
 
     cout << "File read. " << endl;
     file.close();
 }
 
 void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
-    // TODO
+    ifstream file(fileName);
+    if (!file) {
+        cerr << "Error opening file " << fileName << endl;
+        exit(1);
+    }
+
+    string location1, location2, drivingStr, walkingStr;
+    double driving, walking;
+
+    string line;
+    getline(file, line);
+
+    while (getline(file, line)) {
+        istringstream iss(line);
+        getline(iss, location1, ',');
+        getline(iss, location2, ',');
+        getline(iss, drivingStr, ',');
+        getline(iss, walkingStr, '\r');
+
+        cout << location1 << " " << location2 << " " << drivingStr << " " << walkingStr << endl;
+
+        if (drivingStr != "X") {
+            driving = stod(drivingStr);
+            if(!graph.addBidirectionalEdge(location1, location2, driving, "drivable")) exit(1);
+        }
+        if (walkingStr != "X") {
+            walking = stod(walkingStr);
+            if(!graph.addBidirectionalEdge(location2, location1, walking, "walkable")) exit(1);
+        }
+
+    }
+    cout << "File read. " << endl;
+    file.close();
 }
 
 

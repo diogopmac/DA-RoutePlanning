@@ -22,12 +22,19 @@ class Edge;
 template <class T>
 class Vertex {
 public:
+    // TO BE REMOVED
     Vertex(T in);
+
+    // ADDED
     Vertex(std::string name, int id, std::string code, bool parking);
+
+    // TO BE REMOVED
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
 
+    // TO BE REMOVED
     T getInfo() const;
 
+    // ADDED
     [[nodiscard]] std::string getName() const;
     [[nodiscard]] int getID() const;
     [[nodiscard]] std::string getCode() const;
@@ -41,10 +48,13 @@ public:
     Edge<T> *getPath() const;
     std::vector<Edge<T> *> getIncoming() const;
 
+    // TO BE REMOVED
     void setInfo(T info);
+
     void setVisited(bool visited);
     void setProcessing(bool processing);
 
+    // TO BE REMOVED
     int getLow() const;
     void setLow(int value);
     int getNum() const;
@@ -54,6 +64,10 @@ public:
     void setDist(double dist);
     void setPath(Edge<T> *path);
     Edge<T> * addEdge(Vertex<T> *dest, double w);
+
+    Edge<T> *addEdge(Vertex<T> *d, double driving, double walking);
+    Edge<T> *addEdge(Vertex<T> *d, double distance, std::string label);
+
     bool removeEdge(T in);
     void removeOutgoingEdges();
 
@@ -86,21 +100,30 @@ protected:
 template <class T>
 class Edge {
 public:
+    // TO BE REMOVED
     Edge(Vertex<T> *orig, Vertex<T> *dest, double w);
+
+    // ADDED
+    Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label);
 
     Vertex<T> * getDest() const;
     double getWeight() const;
     bool isSelected() const;
     Vertex<T> * getOrig() const;
     Edge<T> *getReverse() const;
+
+    // TO BE REMOVED
     double getFlow() const;
 
     void setSelected(bool selected);
     void setReverse(Edge<T> *reverse);
+
+    // TO BE REMOVED
     void setFlow(double flow);
 protected:
     Vertex<T> * dest; // destination vertex
     double weight; // edge weight, can also be used for capacity
+    std::string label;
 
     // auxiliary fields
     bool selected = false;
@@ -109,6 +132,7 @@ protected:
     Vertex<T> *orig;
     Edge<T> *reverse = nullptr;
 
+    // TO BE REMOVED
     double flow; // for flow-related problems
 };
 
@@ -121,11 +145,18 @@ public:
     /*
     * Auxiliary function to find a vertex with a given the content.
     */
+
+    // TO BE REMOVED
     Vertex<T> *findVertex(const T &in) const;
+
+    Vertex<T> *findVertex(const std::string &in) const;
+
     /*
      *  Adds a vertex with a given content or info (in) to a graph (this).
      *  Returns true if successful, and false if a vertex with that content already exists.
      */
+
+    // TO BE REMOVED
     bool addVertex(const T &in);
 
     bool addVertex(const std::string& name, const int& id, const std::string &code, const bool &hasParking);
@@ -137,9 +168,16 @@ public:
      * destination vertices and the edge weight (w).
      * Returns true if successful, and false if the source or destination vertex does not exist.
      */
+
+    // TO BE REMOVED
     bool addEdge(const T &sourc, const T &dest, double w);
     bool removeEdge(const T &source, const T &dest);
+
+    // TO BE REMOVED
     bool addBidirectionalEdge(const T &sourc, const T &dest, double w);
+
+    // ADDED
+    bool addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label);
 
     int getNumVertex() const;
     std::vector<Vertex<T> *> getVertexSet() const;
@@ -147,6 +185,7 @@ public:
 protected:
     std::vector<Vertex<T> *> vertexSet;    // vertex set
 
+    // TO BE REMOVED
     double ** distMatrix = nullptr;   // dist matrix for Floyd-Warshall
     int **pathMatrix = nullptr;   // path matrix for Floyd-Warshall
 
@@ -178,6 +217,14 @@ Vertex<T>::Vertex(std::string name, int id,
 template <class T>
 Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double w) {
     auto newEdge = new Edge<T>(this, d, w);
+    adj.push_back(newEdge);
+    d->incoming.push_back(newEdge);
+    return newEdge;
+}
+
+template <class T>
+Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
+    auto newEdge = new Edge<T>(this, d, distance, label);
     adj.push_back(newEdge);
     d->incoming.push_back(newEdge);
     return newEdge;
@@ -357,6 +404,9 @@ template <class T>
 Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double w): orig(orig), dest(dest), weight(w) {}
 
 template <class T>
+Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label): orig(orig), dest(dest), weight(distance), label(label) {}
+
+template <class T>
 Vertex<T> * Edge<T>::getDest() const {
     return this->dest;
 }
@@ -421,6 +471,16 @@ Vertex<T> * Graph<T>::findVertex(const T &in) const {
     for (auto v : vertexSet)
         if (v->getInfo() == in)
             return v;
+    return nullptr;
+}
+
+template <class T>
+Vertex<T> * Graph<T>::findVertex(const std::string &in) const {
+    for (auto v : vertexSet) {
+        if (v->getCode() == in) {
+            return v;
+        }
+    }
     return nullptr;
 }
 
@@ -491,6 +551,7 @@ bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
     return true;
 }
 
+
 /*
  * Removes an edge from a graph (this).
  * The edge is identified by the source (sourc) and destination (dest) contents.
@@ -517,6 +578,19 @@ bool Graph<T>::addBidirectionalEdge(const T &sourc, const T &dest, double w) {
     e2->setReverse(e1);
     return true;
 }
+
+template <class T>
+bool Graph<T>::addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label) {
+    auto v1 = findVertex(source);
+    auto v2 = findVertex(dest);
+    if (v1 == nullptr || v2 == nullptr) return false;
+    auto e1 = v1->addEdge(v2, distance, label);
+    auto e2 = v2->addEdge(v1, distance, label);
+    e1->setReverse(e2);
+    e2->setReverse(e1);
+    return true;
+}
+
 
 inline void deleteMatrix(int **m, int n) {
     if (m != nullptr) {

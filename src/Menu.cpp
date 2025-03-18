@@ -26,13 +26,7 @@ void Menu::DefaultMenu() {
         switch (option) {
             case 1:
                 reader.readLocations("../docs/Locations.csv", graph);
-                for (auto v : graph.getVertexSet()) {
-                    cout << "Name " << v->getName() << endl;
-                    cout << "ID " << v->getID() << endl;
-                    cout << "Code " << v->getCode() << endl;
-                    cout << "Has parking lot " << (v->getParking() ? "YES" : "NO") << endl;
-                    cout << endl;
-                }
+                reader.readDistances("../docs/Distances.csv", graph);
 
                 break;
             case 2:
