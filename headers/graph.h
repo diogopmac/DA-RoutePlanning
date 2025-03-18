@@ -22,12 +22,13 @@ class Edge;
 template <class T>
 class Vertex {
 public:
+    //CHANGED - done
     Vertex(std::string name, int id, std::string code, bool parking);
 
     // ...
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
 
-    // ADDED
+    // ADDED - done
     [[nodiscard]] std::string getName() const;
     [[nodiscard]] int getID() const;
     [[nodiscard]] std::string getCode() const;
@@ -51,6 +52,7 @@ public:
     void setDist(double dist);
     void setPath(Edge<T> *path);
 
+    //CHANGED - done
     Edge<T> *addEdge(Vertex<T> *d, double distance, std::string label);
 
     //to be revised
@@ -84,12 +86,8 @@ protected:
 template <class T>
 class Edge {
 public:
-    // TO BE REMOVED
-    /*
-    Edge(Vertex<T> *orig, Vertex<T> *dest, double w);
-    */
 
-    // ADDED
+    // ADDED - done
     Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label);
 
     Vertex<T> * getDest() const;
@@ -98,16 +96,8 @@ public:
     Vertex<T> * getOrig() const;
     Edge<T> *getReverse() const;
 
-    // TO BE REMOVED
-    /*
-    double getFlow() const;
-    */
-
     void setSelected(bool selected);
     void setReverse(Edge<T> *reverse);
-
-    // TO BE REMOVED
-    void setFlow(double flow);
 protected:
     Vertex<T> * dest; // destination vertex
     double weight; // edge weight, can also be used for capacity
@@ -120,8 +110,6 @@ protected:
     Vertex<T> *orig;
     Edge<T> *reverse = nullptr;
 
-    // TO BE REMOVED
-    /*double flow; // for flow-related problems*/
 };
 
 /********************** Graph  ****************************/
@@ -134,9 +122,7 @@ public:
     * Auxiliary function to find a vertex with a given the content.
     */
 
-    // TO BE REMOVED
-    /*Vertex<T> *findVertex(const T &in) const;*/
-
+    //ADDED - done
     Vertex<T> *findVertex(const std::string &in) const;
 
     /*
@@ -144,9 +130,7 @@ public:
      *  Returns true if successful, and false if a vertex with that content already exists.
      */
 
-    // TO BE REMOVED
-    /*bool addVertex(const T &in);*/
-
+    //ADDED - done
     bool addVertex(const std::string& name, const int& id, const std::string &code, const bool &hasParking);
 
     bool removeVertex(const T &in);
@@ -157,16 +141,7 @@ public:
      * Returns true if successful, and false if the source or destination vertex does not exist.
      */
 
-    // TO BE REMOVED
-    /*bool addEdge(const T &sourc, const T &dest, double w);
-    bool removeEdge(const T &source, const T &dest);*/
-
-    // TO BE REMOVED
-    /*
-     *bool addBidirectionalEdge(const T &sourc, const T &dest, double w);
-    */
-
-    // ADDED
+    // ADDED - done
     bool addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label);
 
     int getNumVertex() const;
@@ -174,10 +149,6 @@ public:
 
 protected:
     std::vector<Vertex<T> *> vertexSet;    // vertex set
-
-    // TO BE REMOVED
-    double ** distMatrix = nullptr;   // dist matrix for Floyd-Warshall
-    int **pathMatrix = nullptr;   // path matrix for Floyd-Warshall
 
     /*
      * Finds the index of the vertex with a given content.
@@ -188,6 +159,7 @@ protected:
 void deleteMatrix(int **m, int n);
 void deleteMatrix(double **m, int n);
 
+// DONE until this point
 
 /************************* Vertex  **************************/
 
