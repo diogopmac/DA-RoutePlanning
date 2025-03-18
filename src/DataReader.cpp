@@ -13,7 +13,7 @@ DataReader::DataReader() {}
 DataReader::~DataReader() {}
 
 
-void DataReader::readLocations(const std::string& fileName) {
+void DataReader::readLocations(const std::string& fileName, Graph<int>& graph) {
     ifstream file(fileName);
     if (!file) {
         cerr << "Error opening file " << fileName << endl;
@@ -45,13 +45,16 @@ void DataReader::readLocations(const std::string& fileName) {
         cout << "code: " << code << endl;
         cout << "parking: " << (parking ? "Yes" : "No") << endl;
         cout << endl;
+
+        graph.addVertex(name, id, code, parking);
     }
+
 
     cout << "File read. " << endl;
     file.close();
 }
 
-void DataReader::readDistances(const std::string& fileName) {
+void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
     // TODO
 }
 

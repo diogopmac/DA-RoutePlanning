@@ -5,6 +5,7 @@
 #define DA_TP_CLASSES_GRAPH
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <queue>
 #include <limits>
@@ -22,9 +23,16 @@ template <class T>
 class Vertex {
 public:
     Vertex(T in);
+    Vertex(std::string name, int id, std::string code, bool parking);
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
 
     T getInfo() const;
+
+    [[nodiscard]] std::string getName() const;
+    [[nodiscard]] int getID() const;
+    [[nodiscard]] std::string getCode() const;
+    [[nodiscard]] bool getParking() const;
+
     std::vector<Edge<T> *> getAdj() const;
     bool isVisited() const;
     bool isProcessing() const;
@@ -53,6 +61,10 @@ public:
 protected:
     T info;                // info node
     std::vector<Edge<T> *> adj;  // outgoing edges
+    std::string name; // place name
+    int id; // place id
+    std::string code; // place code
+    bool hasParking; // place parking
 
     // auxiliary fields
     bool visited = false; // used by DFS, BFS, Prim ...
@@ -115,6 +127,9 @@ public:
      *  Returns true if successful, and false if a vertex with that content already exists.
      */
     bool addVertex(const T &in);
+
+    bool addVertex(const std::string& name, const int& id, const std::string &code, const bool &hasParking);
+
     bool removeVertex(const T &in);
 
     /*
@@ -149,6 +164,13 @@ void deleteMatrix(double **m, int n);
 
 template <class T>
 Vertex<T>::Vertex(T in): info(in) {}
+
+
+template<class T>
+Vertex<T>::Vertex(std::string name, int id,
+    std::string code, bool parking)
+    : name(name), id(id), code(code), hasParking(parking) {}
+
 /*
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
@@ -206,6 +228,26 @@ bool Vertex<T>::operator<(Vertex<T> & vertex) const {
 template <class T>
 T Vertex<T>::getInfo() const {
     return this->info;
+}
+
+template<class T>
+std::string Vertex<T>::getName() const {
+    return this->name;
+}
+
+template<class T>
+std::string Vertex<T>::getCode() const {
+    return this->code;
+}
+
+template<class T>
+int Vertex<T>::getID() const {
+    return this->id;
+}
+
+template<class T>
+bool Vertex<T>::getParking() const {
+    return this->hasParking;
 }
 
 template <class T>
@@ -403,6 +445,14 @@ bool Graph<T>::addVertex(const T &in) {
     vertexSet.push_back(new Vertex<T>(in));
     return true;
 }
+
+template<class T>
+bool Graph<T>::addVertex(const std::string &name, const int &id, const std::string &code, const bool &hasParking) {
+    Vertex<T> *vertex = new Vertex<T>(name, id, code, hasParking);
+    vertexSet.push_back(vertex);
+    return true;
+}
+
 
 /*
  *  Removes a vertex with a given content (in) from a graph (this), and
