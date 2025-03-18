@@ -66,8 +66,6 @@ void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
         getline(iss, drivingStr, ',');
         getline(iss, walkingStr, '\r');
 
-        cout << location1 << " " << location2 << " " << drivingStr << " " << walkingStr << endl;
-
         if (drivingStr != "X") {
             driving = stod(drivingStr);
             if(!graph.addBidirectionalEdge(location1, location2, driving, "drivable")) exit(1);

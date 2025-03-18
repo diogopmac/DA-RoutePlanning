@@ -22,17 +22,10 @@ class Edge;
 template <class T>
 class Vertex {
 public:
-    // TO BE REMOVED
-    Vertex(T in);
-
-    // ADDED
     Vertex(std::string name, int id, std::string code, bool parking);
 
-    // TO BE REMOVED
+    // ...
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
-
-    // TO BE REMOVED
-    T getInfo() const;
 
     // ADDED
     [[nodiscard]] std::string getName() const;
@@ -40,6 +33,7 @@ public:
     [[nodiscard]] std::string getCode() const;
     [[nodiscard]] bool getParking() const;
 
+    //...
     std::vector<Edge<T> *> getAdj() const;
     bool isVisited() const;
     bool isProcessing() const;
@@ -48,32 +42,23 @@ public:
     Edge<T> *getPath() const;
     std::vector<Edge<T> *> getIncoming() const;
 
-    // TO BE REMOVED
-    void setInfo(T info);
-
+    //...
     void setVisited(bool visited);
     void setProcessing(bool processing);
 
-    // TO BE REMOVED
-    int getLow() const;
-    void setLow(int value);
-    int getNum() const;
-    void setNum(int value);
-
+    //...
     void setIndegree(unsigned int indegree);
     void setDist(double dist);
     void setPath(Edge<T> *path);
-    Edge<T> * addEdge(Vertex<T> *dest, double w);
 
-    Edge<T> *addEdge(Vertex<T> *d, double driving, double walking);
     Edge<T> *addEdge(Vertex<T> *d, double distance, std::string label);
 
+    //to be revised
     bool removeEdge(T in);
     void removeOutgoingEdges();
 
     friend class MutablePriorityQueue<Vertex>;
 protected:
-    T info;                // info node
     std::vector<Edge<T> *> adj;  // outgoing edges
     std::string name; // place name
     int id; // place id
@@ -83,7 +68,6 @@ protected:
     // auxiliary fields
     bool visited = false; // used by DFS, BFS, Prim ...
     bool processing = false; // used by isDAG (in addition to the visited attribute)
-    int low = -1, num = -1; // used by SCC Tarjan
     unsigned int indegree; // used by topsort
     double dist = 0;
     Edge<T> *path = nullptr;
@@ -201,9 +185,6 @@ void deleteMatrix(double **m, int n);
 
 /************************* Vertex  **************************/
 
-template <class T>
-Vertex<T>::Vertex(T in): info(in) {}
-
 
 template<class T>
 Vertex<T>::Vertex(std::string name, int id,
@@ -214,13 +195,15 @@ Vertex<T>::Vertex(std::string name, int id,
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
-template <class T>
+
+// ...
+/* template <class T>
 Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double w) {
     auto newEdge = new Edge<T>(this, d, w);
     adj.push_back(newEdge);
     d->incoming.push_back(newEdge);
     return newEdge;
-}
+}*/
 
 template <class T>
 Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
@@ -235,6 +218,9 @@ Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
  * from a vertex (this).
  * Returns true if successful, and false if such edge does not exist.
  */
+
+// ...
+/*
 template <class T>
 bool Vertex<T>::removeEdge(T in) {
     bool removedEdge = false;
@@ -253,6 +239,7 @@ bool Vertex<T>::removeEdge(T in) {
     }
     return removedEdge;
 }
+*/
 
 /*
  * Auxiliary function to remove an outgoing edge of a vertex.
@@ -272,10 +259,13 @@ bool Vertex<T>::operator<(Vertex<T> & vertex) const {
     return this->dist < vertex.dist;
 }
 
+//REMOVE
+/*
 template <class T>
 T Vertex<T>::getInfo() const {
     return this->info;
 }
+*/
 
 template<class T>
 std::string Vertex<T>::getName() const {
@@ -297,6 +287,8 @@ bool Vertex<T>::getParking() const {
     return this->hasParking;
 }
 
+// REMOVE
+/*
 template <class T>
 int Vertex<T>::getLow() const {
     return this->low;
@@ -315,7 +307,7 @@ int Vertex<T>::getNum() const {
 template <class T>
 void Vertex<T>::setNum(int value) {
     this->num = value;
-}
+}*/
 
 template <class T>
 std::vector<Edge<T>*> Vertex<T>::getAdj() const {
@@ -352,10 +344,12 @@ std::vector<Edge<T> *> Vertex<T>::getIncoming() const {
     return this->incoming;
 }
 
+//REMOVE
+/*
 template <class T>
 void Vertex<T>::setInfo(T in) {
     this->info = in;
-}
+}*/
 
 template <class T>
 void Vertex<T>::setVisited(bool visited) {
@@ -382,6 +376,8 @@ void Vertex<T>::setPath(Edge<T> *path) {
     this->path = path;
 }
 
+//REMOVE
+/*
 template <class T>
 void Vertex<T>::deleteEdge(Edge<T> *edge) {
     Vertex<T> *dest = edge->getDest();
@@ -396,7 +392,7 @@ void Vertex<T>::deleteEdge(Edge<T> *edge) {
         }
     }
     delete edge;
-}
+}*/
 
 /********************** Edge  ****************************/
 
