@@ -3,6 +3,10 @@
 # Graph.h
 ## Functions/attributes removed
 
+### Generally
+#### We changed the graphs' attribute to ID (integer) instead of T info. We also removed / altered any function that is not used for the Algorithms we are implementing.
+##### Therefore, any function that used info, was changed to ID.
+
 ### - Class Vertex
 1. ``T getInfo() const`` & ``void setInfo(T info)`` - as explained in the **_Functions Changed - Class Vertex - 1._**, we are not using the template Vertex declaration, and so these getters and setters are not necessary
 2. ``T info`` - this attribute is not needed, for the same reasons as above
@@ -16,8 +20,6 @@
 ### - Class Graph
 1. ``bool addEdge(const T &sourc, const T &dest, double w)`` - since we are only interested in adding bidirectional edges as paths exist in both ways, this function is not needed
 2. ``bool removeEdge(const T &source, const T &dest)`` - for the same reason as above, this function is not necessary for our project
-3. ``double ** distMatrix = nullptr`` &rarr; ``int **pathMatrix = nullptr`` - these attributes were only needed if we were implementing the Floyd-Warshall's algorithm, so they can be eliminated
-4. ``inline void deleteMatrix(int **m, int n)`` & ``Graph<T>::~Graph()`` - like explained above, we are not implement the matrix graph view since we didn't implement the Floyd-Warshall's algorithm, making it unnecessary to have a destructor for the matrix
 
 ## Functions changed
 

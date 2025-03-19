@@ -22,19 +22,15 @@ class Edge;
 template <class T>
 class Vertex {
 public:
-    //CHANGED - done
     Vertex(std::string name, int id, std::string code, bool parking);
 
-    // ...
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
 
-    // ADDED - done
     [[nodiscard]] std::string getName() const;
     [[nodiscard]] int getID() const;
     [[nodiscard]] std::string getCode() const;
     [[nodiscard]] bool getParking() const;
 
-    //...
     std::vector<Edge<T> *> getAdj() const;
     bool isVisited() const;
     bool isProcessing() const;
@@ -43,19 +39,15 @@ public:
     Edge<T> *getPath() const;
     std::vector<Edge<T> *> getIncoming() const;
 
-    //...
     void setVisited(bool visited);
     void setProcessing(bool processing);
 
-    //...
     void setIndegree(unsigned int indegree);
     void setDist(double dist);
     void setPath(Edge<T> *path);
 
-    //CHANGED - done
     Edge<T> *addEdge(Vertex<T> *d, double distance, std::string label);
 
-    //to be revised
     bool removeEdge(T in);
     void removeOutgoingEdges();
 
@@ -86,8 +78,6 @@ protected:
 template <class T>
 class Edge {
 public:
-
-    // ADDED - done
     Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label);
 
     Vertex<T> * getDest() const;
@@ -121,18 +111,12 @@ public:
     /*
     * Auxiliary function to find a vertex with a given the content.
     */
-
-    //ADDED - done
     Vertex<T> *findVertex(const std::string &in) const;
-
     /*
      *  Adds a vertex with a given content or info (in) to a graph (this).
      *  Returns true if successful, and false if a vertex with that content already exists.
      */
-
-    //ADDED - done
     bool addVertex(const std::string& name, const int& id, const std::string &code, const bool &hasParking);
-
     bool removeVertex(const T &in);
 
     /*
@@ -140,8 +124,6 @@ public:
      * destination vertices and the edge weight (w).
      * Returns true if successful, and false if the source or destination vertex does not exist.
      */
-
-    // ADDED - done
     bool addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label);
 
     int getNumVertex() const;
@@ -149,6 +131,9 @@ public:
 
 protected:
     std::vector<Vertex<T> *> vertexSet;    // vertex set
+
+    double ** distMatrix = nullptr;   // dist matrix for Floyd-Warshall
+    int **pathMatrix = nullptr;   // path matrix for Floyd-Warshall
 
     /*
      * Finds the index of the vertex with a given content.
@@ -172,8 +157,6 @@ Vertex<T>::Vertex(std::string name, int id,
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
-
-//ADDED - done
 template <class T>
 Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
     auto newEdge = new Edge<T>(this, d, distance, label);
@@ -187,9 +170,6 @@ Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
  * from a vertex (this).
  * Returns true if successful, and false if such edge does not exist.
  */
-
-// ...
-/*
 template <class T>
 bool Vertex<T>::removeEdge(T in) {
     bool removedEdge = false;
@@ -197,7 +177,7 @@ bool Vertex<T>::removeEdge(T in) {
     while (it != adj.end()) {
         Edge<T> *edge = *it;
         Vertex<T> *dest = edge->getDest();
-        if (dest->getInfo() == in) {
+        if (dest->getID() == in) {
             it = adj.erase(it);
             deleteEdge(edge);
             removedEdge = true; // allows for multiple edges to connect the same pair of vertices (multigraph)
@@ -208,7 +188,6 @@ bool Vertex<T>::removeEdge(T in) {
     }
     return removedEdge;
 }
-*/
 
 /*
  * Auxiliary function to remove an outgoing edge of a vertex.
@@ -308,15 +287,13 @@ void Vertex<T>::setPath(Edge<T> *path) {
     this->path = path;
 }
 
-//to be revised
-/*
 template <class T>
 void Vertex<T>::deleteEdge(Edge<T> *edge) {
     Vertex<T> *dest = edge->getDest();
     // Remove the corresponding edge from the incoming list
     auto it = dest->incoming.begin();
     while (it != dest->incoming.end()) {
-        if ((*it)->getOrig()->getInfo() == info) {
+        if ((*it)->getOrig()->getID() == id) {
             it = dest->incoming.erase(it);
         }
         else {
@@ -324,11 +301,10 @@ void Vertex<T>::deleteEdge(Edge<T> *edge) {
         }
     }
     delete edge;
-}*/
+}
 
 /********************** Edge  ****************************/
 
-//ADDED - done
 template <class T>
 Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label): orig(orig), dest(dest), weight(distance), label(label) {}
 
@@ -382,8 +358,6 @@ std::vector<Vertex<T> *> Graph<T>::getVertexSet() const {
 /*
  * Auxiliary function to find a vertex with a given content.
  */
-
-//ADDED - done
 template <class T>
 Vertex<T> * Graph<T>::findVertex(const std::string &in) const {
     for (auto v : vertexSet) {
@@ -400,16 +374,14 @@ Vertex<T> * Graph<T>::findVertex(const std::string &in) const {
 template <class T>
 int Graph<T>::findVertexIdx(const T &in) const {
     for (unsigned i = 0; i < vertexSet.size(); i++)
-        if (vertexSet[i]->getInfo() == in)
+        if (vertexSet[i]->getID() == in)
             return i;
     return -1;
 }
 /*
- *  Adds a vertex with a given content or info (in) to a graph (this).
+ *  Adds a vertex with a given content to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
-
-//ADDED - done
 template<class T>
 bool Graph<T>::addVertex(const std::string &name, const int &id, const std::string &code, const bool &hasParking) {
     Vertex<T> *vertex = new Vertex<T>(name, id, code, hasParking);
@@ -423,15 +395,14 @@ bool Graph<T>::addVertex(const std::string &name, const int &id, const std::stri
  *  all outgoing and incoming edges.
  *  Returns true if successful, and false if such vertex does not exist.
  */
-
 template <class T>
 bool Graph<T>::removeVertex(const T &in) {
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
-        if ((*it)->getInfo() == in) {
+        if ((*it)->getID() == in) {
             auto v = *it;
             v->removeOutgoingEdges();
             for (auto u : vertexSet) {
-                u->removeEdge(v->getInfo());
+                u->removeEdge(v->getID());
             }
             vertexSet.erase(it);
             delete v;
@@ -442,19 +413,10 @@ bool Graph<T>::removeVertex(const T &in) {
 }
 
 /*
- * Adds an edge to a graph (this), given the contents of the source and
- * destination vertices and the edge weight (w).
- * Returns true if successful, and false if the source or destination vertex does not exist.
- */
-
-
-/*
  * Removes an edge from a graph (this).
  * The edge is identified by the source (sourc) and destination (dest) contents.
  * Returns true if successful, and false if such edge does not exist.
  */
-
-//ADDED - done
 template <class T>
 bool Graph<T>::addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label) {
     auto v1 = findVertex(source);
@@ -467,8 +429,16 @@ bool Graph<T>::addBidirectionalEdge(const std::string &source, const std::string
     return true;
 }
 
-//REMOVE??? - already added to README in functions removed
 inline void deleteMatrix(int **m, int n) {
+    if (m != nullptr) {
+        for (int i = 0; i < n; i++)
+            if (m[i] != nullptr)
+                delete [] m[i];
+        delete [] m;
+    }
+}
+
+inline void deleteMatrix(double **m, int n) {
     if (m != nullptr) {
         for (int i = 0; i < n; i++)
             if (m[i] != nullptr)
