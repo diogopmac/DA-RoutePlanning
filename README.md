@@ -17,12 +17,14 @@
 1. ``bool addEdge(const T &sourc, const T &dest, double w)`` - since we are only interested in adding bidirectional edges as paths exist in both ways, this function is not needed
 2. ``bool removeEdge(const T &source, const T &dest)`` - for the same reason as above, this function is not necessary for our project
 3. ``double ** distMatrix = nullptr`` &rarr; ``int **pathMatrix = nullptr`` - these attributes were only needed if we were implementing the Floyd-Warshall's algorithm, so they can be eliminated
+4. ``inline void deleteMatrix(int **m, int n)`` & ``Graph<T>::~Graph()`` - like explained above, we are not implement the matrix graph view since we didn't implement the Floyd-Warshall's algorithm, making it unnecessary to have a destructor for the matrix
 
 ## Functions changed
 
 ### - Class Vertex
 1. ``Vertex (T in)`` &rarr; ``Vertex(std::string name, int id, std::string code, bool parking)`` - when defining the vertex, we came to the conclusion it would be beneficial to add **_new parameters_** to make the process of identifying the different locations easier, which means there is no need to use template declarations
 2. ``Edge<T> * addEdge(Vertex<T> *dest, double w)`` &rarr; ``Edge<T> *addEdge(Vertex<T> *d, double distance, std::string label);`` - we changed this function by adding a parameter called **_label_** to allow us to identify if a path is either _walkable_ or _drivable_. This allows us to filter de edges in terms of type throughout the project
+3. ``Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double w)`` &rarr; ``Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label)`` - due to the changes made above, with the addition of the **_label_** attribute, we have to apply these changes to all the functions that use it
 
 ### - Class Edge
 1. ``Edge(Vertex<T> *orig, Vertex<T> *dest, double w)`` &rarr; ``Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label)`` - like previously described in the **_Class Vertex_**, it is beneficial for us to have a **_label_** parameter to allow us to distinguish the edges(paths) that are _walkable_ from those that are _drivable_, so those need to be added to the Edge declaration.
@@ -36,7 +38,3 @@
 
 ### - Class Vertex
 1. ``std::string getName() const`` & ``int getID() const`` & ``std::string getCode() const`` & ``bool getParking() const`` - due to the attributes added into the function **_Vertex()_** we needed to implement getter for all of those
-
-
-Vertex<T>::Vertex(T in): info(in) {}
-

@@ -159,7 +159,6 @@ protected:
 void deleteMatrix(int **m, int n);
 void deleteMatrix(double **m, int n);
 
-// DONE until this point
 
 /************************* Vertex  **************************/
 
@@ -174,15 +173,7 @@ Vertex<T>::Vertex(std::string name, int id,
  * with a given destination vertex (d) and edge weight (w).
  */
 
-// ...
-/* template <class T>
-Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double w) {
-    auto newEdge = new Edge<T>(this, d, w);
-    adj.push_back(newEdge);
-    d->incoming.push_back(newEdge);
-    return newEdge;
-}*/
-
+//ADDED - done
 template <class T>
 Edge<T> * Vertex<T>::addEdge(Vertex<T> *d, double distance, std::string label) {
     auto newEdge = new Edge<T>(this, d, distance, label);
@@ -237,14 +228,6 @@ bool Vertex<T>::operator<(Vertex<T> & vertex) const {
     return this->dist < vertex.dist;
 }
 
-//REMOVE
-/*
-template <class T>
-T Vertex<T>::getInfo() const {
-    return this->info;
-}
-*/
-
 template<class T>
 std::string Vertex<T>::getName() const {
     return this->name;
@@ -264,28 +247,6 @@ template<class T>
 bool Vertex<T>::getParking() const {
     return this->hasParking;
 }
-
-// REMOVE
-/*
-template <class T>
-int Vertex<T>::getLow() const {
-    return this->low;
-}
-
-template <class T>
-void Vertex<T>::setLow(int value) {
-    this->low = value;
-}
-
-template <class T>
-int Vertex<T>::getNum() const {
-    return this->num;
-}
-
-template <class T>
-void Vertex<T>::setNum(int value) {
-    this->num = value;
-}*/
 
 template <class T>
 std::vector<Edge<T>*> Vertex<T>::getAdj() const {
@@ -322,13 +283,6 @@ std::vector<Edge<T> *> Vertex<T>::getIncoming() const {
     return this->incoming;
 }
 
-//REMOVE
-/*
-template <class T>
-void Vertex<T>::setInfo(T in) {
-    this->info = in;
-}*/
-
 template <class T>
 void Vertex<T>::setVisited(bool visited) {
     this->visited = visited;
@@ -354,7 +308,7 @@ void Vertex<T>::setPath(Edge<T> *path) {
     this->path = path;
 }
 
-//REMOVE
+//to be revised
 /*
 template <class T>
 void Vertex<T>::deleteEdge(Edge<T> *edge) {
@@ -374,10 +328,7 @@ void Vertex<T>::deleteEdge(Edge<T> *edge) {
 
 /********************** Edge  ****************************/
 
-// REMOVE
-//template <class T>
-//Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double w): orig(orig), dest(dest), weight(w) {}
-
+//ADDED - done
 template <class T>
 Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double distance, std::string label): orig(orig), dest(dest), weight(distance), label(label) {}
 
@@ -406,11 +357,6 @@ bool Edge<T>::isSelected() const {
     return this->selected;
 }
 
-/*template <class T>
-double Edge<T>::getFlow() const {
-    return flow;
-}*/
-
 template <class T>
 void Edge<T>::setSelected(bool selected) {
     this->selected = selected;
@@ -420,11 +366,6 @@ template <class T>
 void Edge<T>::setReverse(Edge<T> *reverse) {
     this->reverse = reverse;
 }
-
-/*template <class T>
-void Edge<T>::setFlow(double flow) {
-    this->flow = flow;
-}*/
 
 /********************** Graph  ****************************/
 
@@ -441,17 +382,8 @@ std::vector<Vertex<T> *> Graph<T>::getVertexSet() const {
 /*
  * Auxiliary function to find a vertex with a given content.
  */
-// ALTERED
-/*
-template <class T>
-Vertex<T> * Graph<T>::findVertex(const T &in) const {
-    for (auto v : vertexSet)
-        if (v->getInfo() == in)
-            return v;
-    return nullptr;
-}
-*/
 
+//ADDED - done
 template <class T>
 Vertex<T> * Graph<T>::findVertex(const std::string &in) const {
     for (auto v : vertexSet) {
@@ -476,14 +408,8 @@ int Graph<T>::findVertexIdx(const T &in) const {
  *  Adds a vertex with a given content or info (in) to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
-/*template <class T>
-bool Graph<T>::addVertex(const T &in) {
-    if (findVertex(in) != nullptr)
-        return false;
-    vertexSet.push_back(new Vertex<T>(in));
-    return true;
-}*/
 
+//ADDED - done
 template<class T>
 bool Graph<T>::addVertex(const std::string &name, const int &id, const std::string &code, const bool &hasParking) {
     Vertex<T> *vertex = new Vertex<T>(name, id, code, hasParking);
@@ -520,15 +446,6 @@ bool Graph<T>::removeVertex(const T &in) {
  * destination vertices and the edge weight (w).
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
-/*template <class T>
-bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
-    auto v1 = findVertex(sourc);
-    auto v2 = findVertex(dest);
-    if (v1 == nullptr || v2 == nullptr)
-        return false;
-    v1->addEdge(v2, w);
-    return true;
-}*/
 
 
 /*
@@ -536,28 +453,8 @@ bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
  * The edge is identified by the source (sourc) and destination (dest) contents.
  * Returns true if successful, and false if such edge does not exist.
  */
-/*template <class T>
-bool Graph<T>::removeEdge(const T &sourc, const T &dest) {
-    Vertex<T> * srcVertex = findVertex(sourc);
-    if (srcVertex == nullptr) {
-        return false;
-    }
-    return srcVertex->removeEdge(dest);
-}
 
-template <class T>
-bool Graph<T>::addBidirectionalEdge(const T &sourc, const T &dest, double w) {
-    auto v1 = findVertex(sourc);
-    auto v2 = findVertex(dest);
-    if (v1 == nullptr || v2 == nullptr)
-        return false;
-    auto e1 = v1->addEdge(v2, w);
-    auto e2 = v2->addEdge(v1, w);
-    e1->setReverse(e2);
-    e2->setReverse(e1);
-    return true;
-}*/
-
+//ADDED - done
 template <class T>
 bool Graph<T>::addBidirectionalEdge(const std::string &source, const std::string &dest, double distance, std::string label) {
     auto v1 = findVertex(source);
@@ -570,17 +467,8 @@ bool Graph<T>::addBidirectionalEdge(const std::string &source, const std::string
     return true;
 }
 
-
+//REMOVE??? - already added to README in functions removed
 inline void deleteMatrix(int **m, int n) {
-    if (m != nullptr) {
-        for (int i = 0; i < n; i++)
-            if (m[i] != nullptr)
-                delete [] m[i];
-        delete [] m;
-    }
-}
-
-inline void deleteMatrix(double **m, int n) {
     if (m != nullptr) {
         for (int i = 0; i < n; i++)
             if (m[i] != nullptr)
