@@ -34,8 +34,7 @@ vector<int> dfs(Graph<int> *g, const std::string & source) {
     return res;
 }
 
-template <class T>
-bool relax(Edge<T> *e) {
+bool Menu::relax(Edge<int> *e) {
     if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
 
     e->getDest()->setDist(e->getOrig()->getDist() + e->getWeight());
@@ -43,8 +42,7 @@ bool relax(Edge<T> *e) {
     return true;
 }
 
-template <class T>
-void dijkstra(Graph<T> *g, const std::string &start) {
+void Menu::dijkstra(Graph<int> *g, const std::string &start) {
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
@@ -52,26 +50,29 @@ void dijkstra(Graph<T> *g, const std::string &start) {
     auto s = g->findVertex(start);
     s->setDist(0);
 
-    MutablePriorityQueue<Vertex<T>> q;
+    MutablePriorityQueue<Vertex<int>> q;
     q.insert(s);
     while (!q.empty()) {
         auto v = q.extractMin();
         for (auto e : v->getAdj()) {
-            auto dist_old = e->getDest()->getDist();
-            if (relax(e)) {
-                if (dist_old == INF) {
-                    q.insert(e->getDest());
-                } else {
-                    q.decreaseKey(e->getDest());
+            // DRIVABLE OU WALKABLE, driving-walking é diferente
+            if (e->getLabel() == "drivable") {
+                auto dist_old = e->getDest()->getDist();
+                if (relax(e)) {
+                    if (dist_old == INF) {
+                        q.insert(e->getDest());
+                    } else {
+                        q.decreaseKey(e->getDest());
+                    }
                 }
             }
         }
     }
 }
 
-template <class T>
-std::vector<T> bestPath(Graph<T> *g, const std::string &start, const std::string &end) {
-    std::vector<T> res;
+std::vector<int> Menu::bestPath(Graph<int> *g, const std::string &start, const std::string &end) {
+    std::vector<int> res;
+    dijkstra(g, start);
     auto v = g->findVertex(end);
     if (v == nullptr || v->getDist() == INF) return res;
 
@@ -117,13 +118,10 @@ void Menu::DefaultMenu() {
 
                 break;
             case 2: {
-                vector<int> res = dfs(&graph, "TR2349");
-                vector<int> res2 = bestPath(&graph, "CALE", "JP6553");
-
                 /*
-                for (auto v : res) cout << v << " ";
+                *vector<int> res = dfs(&graph, "TR2349");
                 */
-
+                vector<int> res2 = bestPath(&graph, "JP6553", "RB2963");
                 break;
             }
             case 3:
