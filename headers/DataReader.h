@@ -5,14 +5,14 @@
 #ifndef DATAREADER_H
 #define DATAREADER_H
 #include <string>
-#include "Graph.h"
+#include "graph.h"
 
 class DataReader {
     public:
     DataReader();
     ~DataReader();
-    void readLocations(const std::string fileName);
-    void readDistances(const std::string fileName);
+    void readLocations(const std::string& fileName, Graph<int>& graph);
+    void readDistances(const std::string& fileName, Graph<int>& graph);
 };
 
 #endif //DATAREADER_H

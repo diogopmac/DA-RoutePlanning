@@ -4,14 +4,18 @@
 
 #ifndef MENU_H
 #define MENU_H
-#include "Graph.h"
+#include "graph.h"
+#include "DataReader.h"
 #include <string>
 
 class Menu {
-    public:
-        Menu();
-        void DefaultMenu();
-        void MenuBatchMode(const std::string& inFile, const std::string& outFile);
+private:
+    Graph<int> graph;
+    DataReader reader;
+public:
+    Menu();
+    void DefaultMenu();
+    void MenuBatchMode(const std::string& inFile, const std::string& outFile);
 };
 
 
