@@ -34,6 +34,63 @@ vector<int> dfs(Graph<int> *g, const std::string & source) {
     return res;
 }
 
+template <class T>
+bool relax(Edge<T> *e) {
+    if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
+
+    e->getDest()->setDist(e->getOrig()->getDist() + e->getWeight());
+    e->getDest()->setPath(e);
+    return true;
+}
+
+template <class T>
+void dijkstra(Graph<T> *g, const std::string &start) {
+    for (auto v : g->getVertexSet()) {
+        v->setDist(INF);
+        v->setPath(nullptr);
+    }
+    auto s = g->findVertex(start);
+    s->setDist(0);
+
+    MutablePriorityQueue<Vertex<T>> q;
+    q.insert(s);
+    while (!q.empty()) {
+        auto v = q.extractMin();
+        for (auto e : v->getAdj()) {
+            auto dist_old = e->getDest()->getDist();
+            if (relax(e)) {
+                if (dist_old == INF) {
+                    q.insert(e->getDest());
+                } else {
+                    q.decreaseKey(e->getDest());
+                }
+            }
+        }
+    }
+}
+
+template <class T>
+std::vector<T> bestPath(Graph<T> *g, const std::string &start, const std::string &end) {
+    std::vector<T> res;
+    auto v = g->findVertex(end);
+    if (v == nullptr || v->getDist() == INF) return res;
+
+    res.push_back(v->getID());
+    while (v->getPath() != nullptr) {
+        v = v->getPath()->getOrig();
+        res.push_back(v->getID());
+    }
+
+    reverse(res.begin(), res.end());
+    if (res.empty() || res[0] != g->findVertex(start)->getID()) {
+        std::cout << res[0] << std::endl;
+        std::cout << g->findVertex(start)->getID() << std::endl;
+        for (auto r : res) std::cout << r << " ";
+        std::cout << "ERROR: Origin not found!" << std::endl;
+    }
+    return res;
+}
+
 Menu::Menu() = default;
 
 void Menu::DefaultMenu() {
@@ -61,7 +118,8 @@ void Menu::DefaultMenu() {
                 break;
             case 2: {
                 vector<int> res = dfs(&graph, "TR2349");
-                
+                vector<int> res2 = bestPath(&graph, "CALE", "JP6553");
+
                 /*
                 for (auto v : res) cout << v << " ";
                 */
