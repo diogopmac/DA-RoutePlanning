@@ -85,6 +85,7 @@ public:
     bool isSelected() const;
     Vertex<T> * getOrig() const;
     Edge<T> *getReverse() const;
+    std::string getLabel() const;
 
     void setSelected(bool selected);
     void setReverse(Edge<T> *reverse);
@@ -326,6 +327,11 @@ Vertex<T> * Edge<T>::getOrig() const {
 template <class T>
 Edge<T> *Edge<T>::getReverse() const {
     return this->reverse;
+}
+
+template <class T>
+std::string Edge<T>::getLabel() const {
+    return this->label;
 }
 
 template <class T>
