@@ -4,8 +4,10 @@
 ## Functions/attributes removed
 
 ### Generally
-#### We changed the graphs' attribute to ID (integer) instead of T info. We also removed / altered any function that is not used for the Algorithms we are implementing.
-##### Therefore, any function that used info, was changed to ID.
+### We changed the graphs' attribute to ID (integer) instead of T info.
+#### Therefore, any function that used info, was changed to ID. This includes helper functions that used the ``getInfo()``, such as ``removeVertex(const T &in)``, ``deleteEdge(Edge<T> *edge)``
+
+#### We also removed / altered any function that is not used for the Algorithms we are implementing.
 
 ### - Class Vertex
 1. ``T getInfo() const`` & ``void setInfo(T info)`` - as explained in the **_Functions Changed - Class Vertex - 1._**, we are not using the template Vertex declaration, and so these getters and setters are not necessary
