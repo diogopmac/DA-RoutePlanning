@@ -17,8 +17,8 @@ public:
     void DefaultMenu();
     void MenuBatchMode(const std::string& inFile, const std::string& outFile);
 
-    std::vector<int> bestPath(Graph<int> *g, const std::string &start, const std::string &end);
-    void dijkstra(Graph<int> *g, const std::string &start);
+    std::vector<int> bestPath(Graph<int> *g, const std::string &start, const std::string &end, const std::string& label);
+    void dijkstra(Graph<int> *g, const std::string &start, const std::string &label);
     bool relax(Edge<int> *e);
 };
 

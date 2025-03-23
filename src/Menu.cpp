@@ -42,7 +42,7 @@ bool Menu::relax(Edge<int> *e) {
     return true;
 }
 
-void Menu::dijkstra(Graph<int> *g, const std::string &start) {
+void Menu::dijkstra(Graph<int> *g, const std::string &start, const std::string &label) {
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
@@ -55,8 +55,7 @@ void Menu::dijkstra(Graph<int> *g, const std::string &start) {
     while (!q.empty()) {
         auto v = q.extractMin();
         for (auto e : v->getAdj()) {
-            // DRIVABLE OU WALKABLE, driving-walking é diferente
-            if (e->getLabel() == "drivable") {
+            if (e->getLabel() == label) {
                 auto dist_old = e->getDest()->getDist();
                 if (relax(e)) {
                     if (dist_old == INF) {
@@ -70,9 +69,9 @@ void Menu::dijkstra(Graph<int> *g, const std::string &start) {
     }
 }
 
-std::vector<int> Menu::bestPath(Graph<int> *g, const std::string &start, const std::string &end) {
+std::vector<int> Menu::bestPath(Graph<int> *g, const std::string &start, const std::string &end, const std::string& label) {
     std::vector<int> res;
-    dijkstra(g, start);
+    dijkstra(g, start, label);
     auto v = g->findVertex(end);
     if (v == nullptr || v->getDist() == INF) return res;
 
@@ -102,8 +101,10 @@ void Menu::DefaultMenu() {
         cout << "\nIndividual Route Planning Tool\n"
                 "Desenho de Algoritmos 2025\n"
                 "[1] Load Map\n"
-                "[2] Show Map\n"
-                "[3] Leave application\n" << endl;
+                "[2] Driving Mode\n"
+                "[3] Walking Mode\n"
+                "[4] Driving-Walking Mode\n"
+                "[5] Leave application\n" << endl;
         cin >> option;
         switch (option) {
             case 1:
@@ -118,20 +119,42 @@ void Menu::DefaultMenu() {
 
                 break;
             case 2: {
-                /*
-                *vector<int> res = dfs(&graph, "TR2349");
-                */
-                vector<int> res2 = bestPath(&graph, "JP6553", "RB2963");
+                string source, destination;
+                cout << "Enter Source: "; cin >> source;
+                cout << "Enter Destination: "; cin >> destination;
+                vector<int> res = bestPath(&graph, source, destination, "drivable");
+
+                cout << "Source : " << graph.findVertex(source)->getID() << endl;
+                cout << "Destination : " << graph.findVertex(destination)->getID() << endl;
+                cout << "Best Driving Route: ";
+                for (auto v : res) cout << v << " ";
+                cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+
                 break;
             }
-            case 3:
+
+            case 3: {
+                string source, destination;
+                cout << "Enter Source: "; cin >> source;
+                cout << "Enter Destination: "; cin >> destination;
+                vector<int> res = bestPath(&graph, source, destination, "walkable");
+
+                cout << "Source : " << graph.findVertex(source)->getID() << endl;
+                cout << "Destination : " << graph.findVertex(destination)->getID() << endl;
+                cout << "Best Driving Route: ";
+                for (auto v : res) cout << v << " ";
+                cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+
+                break;
+            }
+            case 5:
                 cout << "Leaving" << endl;
                 break;
             default:
                 cout << "Invalid Input!" << endl;
                 break;
         }
-    } while (option != 3);
+    } while (option != 5);
 }
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
