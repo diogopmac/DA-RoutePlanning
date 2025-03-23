@@ -97,27 +97,24 @@ void Menu::DefaultMenu() {
     int option;
     DataReader reader = DataReader();
 
+    // CHANGED FOR TESTING PURPOSES
+    /*
+    reader.readLocations("../docs/Locations.csv", graph);
+    reader.readDistances("../docs/Distances.csv", graph);
+    */
+
+    reader.readLocations("../docs/LocSample.csv", graph);
+    reader.readDistances("../docs/DisSample.csv", graph);
+
     do {
         cout << "\nIndividual Route Planning Tool\n"
                 "Desenho de Algoritmos 2025\n"
-                "[1] Load Map\n"
-                "[2] Best Route Mode\n"
-                "[3] Driving-Walking Mode\n"
-                "[4] Leave application\n" << endl;
+                "[1] Best Route Mode\n"
+                "[2] Driving-Walking Mode\n"
+                "[3] Leave application\n" << endl;
         cin >> option;
         switch (option) {
-            case 1:
-                // CHANGED FOR TESTING PURPOSES
-                /*
-                reader.readLocations("../docs/Locations.csv", graph);
-                reader.readDistances("../docs/Distances.csv", graph);
-                */
-
-                reader.readLocations("../docs/LocSample.csv", graph);
-                reader.readDistances("../docs/DisSample.csv", graph);
-
-                break;
-            case 2: {
+            case 1: {
                 std::string mode;
                 int source, destination;
                 vector<int> res;
@@ -147,18 +144,18 @@ void Menu::DefaultMenu() {
                 break;
             }
 
-            case 3: {
+            case 2: {
                 cout << "Work in progress..." << endl;
                 break;
             }
-            case 4:
+            case 3:
                 cout << "Leaving" << endl;
                 break;
             default:
                 cout << "Invalid Input!" << endl;
                 break;
         }
-    } while (option != 4);
+    } while (option != 3);
 }
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
