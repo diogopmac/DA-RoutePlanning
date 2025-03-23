@@ -42,7 +42,7 @@ bool Menu::relax(Edge<int> *e) {
     return true;
 }
 
-void Menu::dijkstra(Graph<int> *g, const std::string &start, const std::string &label) {
+void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &label) {
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
@@ -69,7 +69,7 @@ void Menu::dijkstra(Graph<int> *g, const std::string &start, const std::string &
     }
 }
 
-std::vector<int> Menu::bestPath(Graph<int> *g, const std::string &start, const std::string &end, const std::string& label) {
+std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string& label) {
     std::vector<int> res;
     dijkstra(g, start, label);
     auto v = g->findVertex(end);
@@ -109,32 +109,32 @@ void Menu::DefaultMenu() {
         switch (option) {
             case 1:
                 // CHANGED FOR TESTING PURPOSES
-                /*
                 reader.readLocations("../docs/Locations.csv", graph);
                 reader.readDistances("../docs/Distances.csv", graph);
-                */
 
+                /*
                 reader.readLocations("../docs/LocSample.csv", graph);
                 reader.readDistances("../docs/DisSample.csv", graph);
+                */
 
                 break;
             case 2: {
-                string source, destination;
+                int source, destination;
                 cout << "Enter Source: "; cin >> source;
                 cout << "Enter Destination: "; cin >> destination;
                 vector<int> res = bestPath(&graph, source, destination, "drivable");
 
-                cout << "Source : " << graph.findVertex(source)->getID() << endl;
-                cout << "Destination : " << graph.findVertex(destination)->getID() << endl;
-                cout << "Best Driving Route: ";
-                for (auto v : res) cout << v << " ";
+                cout << "Source:" << graph.findVertex(source)->getID() << endl;
+                cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+                cout << "Best Driving Route:";
+                for (int i = 0; i < res.size(); i++) cout << res[i] << (i == res.size() - 1 ? "" : ",");
                 cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
                 break;
             }
 
             case 3: {
-                string source, destination;
+                int source, destination;
                 cout << "Enter Source: "; cin >> source;
                 cout << "Enter Destination: "; cin >> destination;
                 vector<int> res = bestPath(&graph, source, destination, "walkable");
@@ -142,7 +142,7 @@ void Menu::DefaultMenu() {
                 cout << "Source : " << graph.findVertex(source)->getID() << endl;
                 cout << "Destination : " << graph.findVertex(destination)->getID() << endl;
                 cout << "Best Driving Route: ";
-                for (auto v : res) cout << v << " ";
+                for (int i = 0; i < res.size(); i++) cout << res[i] << (i == res.size() - 1 ? "" : ",");
                 cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
                 break;
