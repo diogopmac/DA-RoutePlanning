@@ -101,28 +101,42 @@ void Menu::DefaultMenu() {
         cout << "\nIndividual Route Planning Tool\n"
                 "Desenho de Algoritmos 2025\n"
                 "[1] Load Map\n"
-                "[2] Driving Mode\n"
-                "[3] Walking Mode\n"
-                "[4] Driving-Walking Mode\n"
-                "[5] Leave application\n" << endl;
+                "[2] Best Route Mode\n"
+                "[3] Driving-Walking Mode\n"
+                "[4] Leave application\n" << endl;
         cin >> option;
         switch (option) {
             case 1:
                 // CHANGED FOR TESTING PURPOSES
+                /*
                 reader.readLocations("../docs/Locations.csv", graph);
                 reader.readDistances("../docs/Distances.csv", graph);
+                */
 
-                /*
                 reader.readLocations("../docs/LocSample.csv", graph);
                 reader.readDistances("../docs/DisSample.csv", graph);
-                */
 
                 break;
             case 2: {
+                std::string mode;
                 int source, destination;
+                vector<int> res;
+
+                cout << "Enter mode: "; cin >> mode;
+                if (mode != "driving" && mode != "walking") {
+                    cout << "ERROR: Wrong mode!" << endl;
+                    break;
+                }
+
                 cout << "Enter Source: "; cin >> source;
                 cout << "Enter Destination: "; cin >> destination;
-                vector<int> res = bestPath(&graph, source, destination, "drivable");
+
+                if (mode == "driving") {
+                    res = bestPath(&graph, source, destination, "drivable");
+                }
+                else if (mode == "walking") {
+                    res = bestPath(&graph, source, destination, "walkable");
+                }
 
                 cout << "Source:" << graph.findVertex(source)->getID() << endl;
                 cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -134,27 +148,17 @@ void Menu::DefaultMenu() {
             }
 
             case 3: {
-                int source, destination;
-                cout << "Enter Source: "; cin >> source;
-                cout << "Enter Destination: "; cin >> destination;
-                vector<int> res = bestPath(&graph, source, destination, "walkable");
-
-                cout << "Source : " << graph.findVertex(source)->getID() << endl;
-                cout << "Destination : " << graph.findVertex(destination)->getID() << endl;
-                cout << "Best Driving Route: ";
-                for (int i = 0; i < res.size(); i++) cout << res[i] << (i == res.size() - 1 ? "" : ",");
-                cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
-
+                cout << "Work in progress..." << endl;
                 break;
             }
-            case 5:
+            case 4:
                 cout << "Leaving" << endl;
                 break;
             default:
                 cout << "Invalid Input!" << endl;
                 break;
         }
-    } while (option != 5);
+    } while (option != 4);
 }
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
