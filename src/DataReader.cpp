@@ -42,7 +42,6 @@ void DataReader::readLocations(const std::string& fileName, Graph<int>& graph) {
         graph.addVertex(name, id, code, parking);
     }
 
-    cout << "File read. " << endl;
     file.close();
 }
 
@@ -76,7 +75,6 @@ void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
         }
 
     }
-    cout << "File read. " << endl;
     file.close();
 }
 
