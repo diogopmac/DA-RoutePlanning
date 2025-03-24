@@ -10,30 +10,6 @@
 
 using namespace std;
 
-void dfsVisit(Vertex<int> *v, vector<int> & res) {
-    res.push_back(v->getID());
-    v->setVisited(true);
-    for (auto a : v->getAdj()) {
-        if (!a->getDest()->isVisited() && a->getLabel() == "drivable") {
-            //
-            //cout << a->getOrig()->getID() << " " << a->getDest()->getID() << endl;
-            //
-            dfsVisit(a->getDest(), res);
-        }
-    }
-}
-
-vector<int> dfs(Graph<int> *g, const std::string & source) {
-    vector<int> res;
-    auto v = g->findVertex(source);
-
-    if (v == nullptr) return res;
-    for (auto v : g->getVertexSet()) v->setVisited(false);
-
-    dfsVisit(v, res);
-    return res;
-}
-
 bool Menu::relax(Edge<int> *e) {
     if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
 
@@ -181,11 +157,39 @@ void Menu::DefaultMenu() {
 }
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
+    DataReader reader = DataReader();
+    vector<int> res;
+
+    // CHANGED FOR TESTING PURPOSES
+    /*
+    reader.readLocations("../docs/Locations.csv", graph);
+    reader.readDistances("../docs/Distances.csv", graph);
+    */
+
+    reader.readLocations("../docs/LocSample.csv", graph);
+    reader.readDistances("../docs/DisSample.csv", graph);
+
+
     string mode;
     int source, destination, includeNode;
     vector<int> avoidNodes;
     vector<pair<int,int>> avoidSegments;
+
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoidSegments, includeNode);
+
+    if (mode == "driving") {
+        res = bestPath(&graph, source, destination, "drivable");
+    }
+    else if (mode == "walking") {
+        res = bestPath(&graph, source, destination, "walkable");
+    }
+
+    cout << "Source:" << graph.findVertex(source)->getID() << endl;
+    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+    cout << "Best Driving Route:";
+    for (int i = 0; i < res.size(); i++) cout << res[i] << (i == res.size() - 1 ? "" : ",");
+    cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+
 }
 
 
