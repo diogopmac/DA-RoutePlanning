@@ -119,14 +119,36 @@ void Menu::DefaultMenu() {
                 int source, destination;
                 vector<int> res;
 
-                cout << "Enter mode: "; cin >> mode;
-                if (mode != "driving" && mode != "walking") {
-                    cout << "ERROR: Wrong mode!" << endl;
-                    break;
+                while (mode != "driving" && mode != "walking") {
+                    cout << "Enter mode: "; cin >> mode;
+                    if (mode != "driving" && mode != "walking") {
+                        cout << "ERROR: Wrong mode!" << endl;
+                    }
                 }
 
-                cout << "Enter Source: "; cin >> source;
-                cout << "Enter Destination: "; cin >> destination;
+                while (true) {
+                    cout << "Enter Source: ";
+                    if (cin >> source) {
+                        if (graph.findVertex(source)) break;
+                        cout << "ERROR: No such vertex!" << endl;
+                    } else {
+                        cout << "ERROR: Wrong input!" << endl;
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    }
+                }
+
+                while (true) {
+                    cout << "Enter Destination: ";
+                    if (cin >> destination) {
+                        if (graph.findVertex(destination)) break;
+                        cout << "ERROR: No such vertex!" << endl;
+                    } else {
+                        cout << "ERROR: Wrong input!" << endl;
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    }
+                }
 
                 if (mode == "driving") {
                     res = bestPath(&graph, source, destination, "drivable");
