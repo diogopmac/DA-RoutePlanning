@@ -78,6 +78,34 @@ void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
     file.close();
 }
 
+void DataReader::readInputFile(const std::string& inFile, std::string& mode,
+        int &source, int &destination, std::vector<int>& avoidNodes,
+        std::vector<std::pair<int, int>>& avoidSegments, int& includeNode) {
+    ifstream input(inFile);
+    if(!input) {
+        cerr << "Error opening file " << inFile << endl;
+        exit(1);
+    }
+
+    /*
+    string line;
+
+    getline(input, line);
+    istringstream ss(line);
+
+    while(getline(input, line)) {
+        istringstream iss(line);
+
+        string discriminant, value;
+
+        getline(iss, discriminant, ':');
+        getline(iss, value);
+
+
+    }
+    input.close();*/
+}
+
 
 
 
