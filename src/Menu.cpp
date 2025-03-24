@@ -48,7 +48,7 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
-        if (!alternative) v->setVisited(false);
+        v->setVisited(false);
     }
 
     for (auto node : avoid_nodes) {
@@ -132,6 +132,9 @@ void Menu::DefaultMenu() {
                 std::string mode;
                 int source, destination;
                 vector<int> res;
+                vector<int> res2;
+                vector<int> avoid_nodes;
+                vector<pair<int,int>> avoid_edges;
 
                 cout << "Enter mode: "; cin >> mode;
                 if (mode != "driving" && mode != "walking") {
@@ -152,9 +155,36 @@ void Menu::DefaultMenu() {
                 cout << "Source:" << graph.findVertex(source)->getID() << endl;
                 cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
                 cout << "Best Driving Route:";
-                for (int i = 0; i < res.size(); i++) cout << res[i] << (i == res.size() - 1 ? "" : ",");
+                for (int i = 0; i < res.size(); i++) {
+                    if (i != 0 && i != res.size()-1) {
+                        avoid_nodes.push_back(graph.findVertex(res[i])->getID());
+                    }
+
+                    // não funciona
+                    if (i + 1 < res.size()) {
+                        avoid_edges.emplace_back(res[i], res[i+1]);
+                    }
+                    cout << res[i] << (i == res.size() - 1 ? "" : ",");
+                }
                 cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
+                if (mode == "driving") {
+                    res2 = bestPath(&graph, source, destination, "drivable", true, avoid_nodes, avoid_edges);
+                }
+                else if (mode == "walking") {
+                    res2 = bestPath(&graph, source, destination, "walkable", true, avoid_nodes, avoid_edges);
+                }
+
+                cout << "Source:" << graph.findVertex(source)->getID() << endl;
+                cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+                cout << "Best Driving Route:";
+                if (graph.findVertex(destination)->getDist() == INF) {
+                    cout << "none" << endl;
+                }
+                else {
+                    for (int i = 0; i < res.size(); i++) cout << res2[i] << (i == res.size() - 1 ? "" : ",");
+                    cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+                }
                 break;
             }
 
