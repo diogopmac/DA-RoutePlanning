@@ -18,11 +18,23 @@ bool Menu::relax(Edge<int> *e) {
     return true;
 }
 
-void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &label) {
+void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode,
+                    const bool alternative, const vector<int> &avoid_nodes, const vector<pair<int,int>> &avoid_edges) {
+
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
+        if (!alternative) v->setVisited(false);
     }
+
+    for (auto node : avoid_nodes) {
+        g->findVertex(node)->setVisited(true);
+    }
+
+    for (auto edge : avoid_edges) {
+        g->findVertex(edge.first)->findEdge(edge.second)->setAvoid(true);
+    }
+
     auto s = g->findVertex(start);
     s->setDist(0);
 
@@ -30,8 +42,9 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &label) {
     q.insert(s);
     while (!q.empty()) {
         auto v = q.extractMin();
+        v->setVisited(true);
         for (auto e : v->getAdj()) {
-            if (e->getLabel() == label) {
+            if (e->getLabel() == transportation_mode && !e->getDest()->isVisited() && !e->shouldAvoid()) {
                 auto dist_old = e->getDest()->getDist();
                 if (relax(e)) {
                     if (dist_old == INF) {
@@ -45,9 +58,10 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &label) {
     }
 }
 
-std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string& label) {
+std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::vector<int> res;
-    dijkstra(g, start, label);
+    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
     auto v = g->findVertex(end);
     if (v == nullptr || v->getDist() == INF) return res;
 

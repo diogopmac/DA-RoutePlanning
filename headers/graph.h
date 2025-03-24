@@ -31,6 +31,8 @@ public:
     [[nodiscard]] std::string getCode() const;
     [[nodiscard]] bool getParking() const;
 
+    Edge<T> * findEdge(int dest);
+
     std::vector<Edge<T> *> getAdj() const;
     bool isVisited() const;
     bool isProcessing() const;
@@ -83,10 +85,12 @@ public:
     Vertex<T> * getDest() const;
     double getWeight() const;
     bool isSelected() const;
+    bool shouldAvoid() const;
     Vertex<T> * getOrig() const;
     Edge<T> *getReverse() const;
     std::string getLabel() const;
 
+    void setAvoid(bool avoid);
     void setSelected(bool selected);
     void setReverse(Edge<T> *reverse);
 protected:
@@ -96,6 +100,7 @@ protected:
 
     // auxiliary fields
     bool selected = false;
+    bool avoid = false;
 
     // used for bidirectional edges
     Vertex<T> *orig;
@@ -230,6 +235,16 @@ bool Vertex<T>::getParking() const {
 }
 
 template <class T>
+Edge<T> * Vertex<T>::findEdge(const int dest) {
+    for (auto e : this->adj) {
+        if (e->getDest()->getID() == dest) {
+            return e;
+        }
+    }
+    return nullptr;
+}
+
+template <class T>
 std::vector<Edge<T>*> Vertex<T>::getAdj() const {
     return this->adj;
 }
@@ -340,6 +355,12 @@ bool Edge<T>::isSelected() const {
     return this->selected;
 }
 
+template<class T>
+bool Edge<T>::shouldAvoid() const {
+    return this->avoid;
+}
+
+
 template <class T>
 void Edge<T>::setSelected(bool selected) {
     this->selected = selected;
@@ -349,6 +370,12 @@ template <class T>
 void Edge<T>::setReverse(Edge<T> *reverse) {
     this->reverse = reverse;
 }
+
+template<class T>
+void Edge<T>::setAvoid(bool avoid) {
+    this->avoid = avoid;
+}
+
 
 /********************** Graph  ****************************/
 
