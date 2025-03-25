@@ -270,7 +270,19 @@ void Menu::RestrictedMenu() {
         }
     }
 
-    cout << "Avoiding Nodes: " << avoid_nodes.size() << endl;
+    cout << "Enter Avoiding Edges: ";
+    getline(cin, input);
+
+    if (!input.empty()) {
+        stringstream ss(input);
+        cout << input << endl;
+        char ignore;
+        int orig, dest;
+        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
+            avoid_edges.emplace_back(orig, dest);
+            if (ss.peek() == ',') ss.ignore();
+        }
+    }
 
 
     if (mode == "driving") {
