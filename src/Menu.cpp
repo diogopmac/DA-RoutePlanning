@@ -24,7 +24,7 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
         v->setPath(nullptr);
-        v->setVisited(false);
+        if (!alternative) v->setVisited(false);
     }
 
     for (auto node : avoid_nodes) {
@@ -42,7 +42,6 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     q.insert(s);
     while (!q.empty()) {
         auto v = q.extractMin();
-        v->setVisited(true);
         for (auto e : v->getAdj()) {
             if (e->getLabel() == transportation_mode && !e->getDest()->isVisited() && !e->shouldAvoid()) {
                 auto dist_old = e->getDest()->getDist();
@@ -68,6 +67,7 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     res.push_back(v->getID());
     while (v->getPath() != nullptr) {
         v = v->getPath()->getOrig();
+        v->setVisited(true);
         res.push_back(v->getID());
     }
 
@@ -154,11 +154,6 @@ void Menu::DefaultMenu() {
                 cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
                 cout << "Best Driving Route:";
                 for (int i = 0; i < res.size(); i++) {
-                    if (i != 0 && i != res.size()-1) {
-                        avoid_nodes.push_back(graph.findVertex(res[i])->getID());
-                    }
-
-                    // não funciona
                     if (i + 1 < res.size()) {
                         avoid_edges.emplace_back(res[i], res[i+1]);
                     }
@@ -180,7 +175,7 @@ void Menu::DefaultMenu() {
                     cout << "none" << endl;
                 }
                 else {
-                    for (int i = 0; i < res.size(); i++) cout << res2[i] << (i == res.size() - 1 ? "" : ",");
+                    for (int i = 0; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
                     cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
                 }
                 break;
