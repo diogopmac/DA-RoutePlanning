@@ -16,6 +16,7 @@ public:
     Menu();
     void MainMenu();
     void DefaultMenu();
+    void RestrictedMenu();
     void MenuBatchMode(const std::string& inFile, const std::string& outFile);
     void readGraph();
 

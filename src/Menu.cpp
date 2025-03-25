@@ -108,9 +108,10 @@ void Menu::MainMenu() {
         cout << "\nIndividual Route Planning Tool\n"
                 "Desenho de Algoritmos 2025\n"
                 "[1] Best Route Mode\n"
-                "[2] Driving-Walking Mode\n"
-                "[3] Batch Mode\n"
-                "[4] Leave application\n" << endl;
+                "[2] Restricted Route Mode\n"
+                "[3] Driving-Walking Mode\n"
+                "[4] Batch Mode\n"
+                "[5] Leave application\n" << endl;
         cin >> option;
         switch (option) {
             case 1: {
@@ -118,21 +119,25 @@ void Menu::MainMenu() {
                 break;
             }
             case 2: {
-                cout << "Work in progress..." << endl;
+                RestrictedMenu();
                 break;
             }
             case 3: {
+                cout << "Work in progress..." << endl;
+                break;
+            }
+            case 4: {
                 MenuBatchMode("../input.txt", "../output.txt");
                 break;
             }
-            case 4:
+            case 5:
                 cout << "Leaving" << endl;
                 break;
             default:
                 cout << "Invalid Input!" << endl;
                 break;
         }
-    } while (option != 4);
+    } while (option != 5);
 }
 
 void Menu::DefaultMenu() {
@@ -204,6 +209,89 @@ void Menu::DefaultMenu() {
     }
     else {
         for (int i = 0; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
+        cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+    }
+}
+
+void Menu::RestrictedMenu() {
+    string mode;
+    int source, destination;
+    vector<int> res;
+    vector<int> res2;
+
+    string restrictedStr;
+    bool restricted;
+    vector<int> avoid_nodes;
+    vector<pair<int,int>> avoid_edges;
+    int includeNode;
+
+    while (mode != "driving" && mode != "walking") {
+        cout << "Enter mode: "; cin >> mode;
+        if (mode != "driving" && mode != "walking") {
+            cout << "ERROR: Wrong mode!" << endl;
+        }
+    }
+
+    while (true) {
+        cout << "Enter Source: ";
+        if (cin >> source) {
+            if (graph.findVertex(source)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    while (true) {
+        cout << "Enter Destination: ";
+        if (cin >> destination) {
+            if (graph.findVertex(destination)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    cout << "Enter Avoiding Nodes: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string input;
+    getline(cin, input);
+
+    if (!input.empty()) {
+        int node;
+        stringstream ss(input);
+        while (ss >> node) {
+            avoid_nodes.push_back(node);
+        }
+    }
+
+    cout << "Avoiding Nodes: " << avoid_nodes.size() << endl;
+
+
+    if (mode == "driving") {
+        res = bestPath(&graph, source, destination, "drivable", false, avoid_nodes, avoid_edges);
+    }
+    else if (mode == "walking") {
+        res = bestPath(&graph, source, destination, "walkable", false, avoid_nodes, avoid_edges);
+    }
+
+    cout << "Source:" << graph.findVertex(source)->getID() << endl;
+    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+    cout << "RestrictedDrivingRoute:";
+    if (graph.findVertex(destination)->getDist() == INF) {
+        cout << "none" << endl;
+    } else {
+        for (int i = 0; i < res.size(); i++) {
+            if (i + 1 < res.size()) {
+                avoid_edges.emplace_back(res[i], res[i+1]);
+            }
+            cout << res[i] << (i == res.size() - 1 ? "" : ",");
+        }
         cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
     }
 }
