@@ -89,11 +89,8 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
 
 Menu::Menu() = default;
 
-void Menu::MainMenu() {
-    int option;
+void Menu::readGraph() {
     DataReader reader = DataReader();
-
-    // CHANGED FOR TESTING PURPOSES
     /*
     reader.readLocations("../docs/Locations.csv", graph);
     reader.readDistances("../docs/Distances.csv", graph);
@@ -101,6 +98,11 @@ void Menu::MainMenu() {
 
     reader.readLocations("../docs/LocSample.csv", graph);
     reader.readDistances("../docs/DisSample.csv", graph);
+}
+
+void Menu::MainMenu() {
+    int option;
+    readGraph();
 
     do {
         cout << "\nIndividual Route Planning Tool\n"
@@ -208,27 +210,17 @@ void Menu::DefaultMenu() {
 
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
-    DataReader reader = DataReader();
     vector<int> res;
     vector<int> res2;
 
     ofstream out(outFile);
-
-    // CHANGED FOR TESTING PURPOSES
-    /*
-    reader.readLocations("../docs/Locations.csv", graph);
-    reader.readDistances("../docs/Distances.csv", graph);
-    */
-
-    reader.readLocations("../docs/LocSample.csv", graph);
-    reader.readDistances("../docs/DisSample.csv", graph);
-
 
     string mode;
     int source, destination, includeNode;
     vector<int> avoidNodes;
     vector<pair<int,int>> avoid_edges;
 
+    DataReader reader = DataReader();
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
 
     if (mode == "driving") {
