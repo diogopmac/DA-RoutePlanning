@@ -14,6 +14,7 @@ private:
     DataReader reader;
 public:
     Menu();
+    void MainMenu();
     void DefaultMenu();
     void MenuBatchMode(const std::string& inFile, const std::string& outFile);
 

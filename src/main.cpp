@@ -11,7 +11,7 @@ int main(int argc , char *argv[]) {
         menu.MenuBatchMode("../" + inFile, "../" + outFile);
     }
     else {
-        menu.DefaultMenu();
+        menu.MainMenu();
     }
     return 0;
 }
