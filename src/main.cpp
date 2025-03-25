@@ -8,7 +8,7 @@ int main(int argc , char *argv[]) {
     if (argc == 3) {
         const std::string inFile = argv[1];
         const std::string outFile = argv[2];
-        menu.MenuBatchMode("../input.txt", "../output.txt");
+        menu.MenuBatchMode("../" + inFile, "../" + outFile);
     }
     else {
         menu.DefaultMenu();
