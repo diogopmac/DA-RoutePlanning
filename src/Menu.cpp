@@ -133,7 +133,6 @@ void Menu::DefaultMenu() {
                 int source, destination;
                 vector<int> res;
                 vector<int> res2;
-                vector<int> avoid_nodes;
                 vector<pair<int,int>> avoid_edges;
 
                 cout << "Enter mode: "; cin >> mode;
@@ -164,10 +163,10 @@ void Menu::DefaultMenu() {
                 cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
                 if (mode == "driving") {
-                    res2 = bestPath(&graph, source, destination, "drivable", true, avoid_nodes, avoid_edges);
+                    res2 = bestPath(&graph, source, destination, "drivable", true, {}, avoid_edges);
                 }
                 else if (mode == "walking") {
-                    res2 = bestPath(&graph, source, destination, "walkable", true, avoid_nodes, avoid_edges);
+                    res2 = bestPath(&graph, source, destination, "walkable", true, {}, avoid_edges);
                 }
 
                 cout << "Source:" << graph.findVertex(source)->getID() << endl;
