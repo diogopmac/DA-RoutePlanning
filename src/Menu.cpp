@@ -20,6 +20,7 @@ bool Menu::relax(Edge<int> *e) {
 
 void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode,
                     const bool alternative, const vector<int> &avoid_nodes, const vector<pair<int,int>> &avoid_edges) {
+    vector<Edge *> edges_to_revert;
 
     for (auto v : g->getVertexSet()) {
         v->setDist(INF);
@@ -32,7 +33,9 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     }
 
     for (auto edge : avoid_edges) {
-        g->findVertex(edge.first)->findEdge(edge.second)->setAvoid(true);
+        auto e = g->findVertex(edge.first)->findEdge(edge.second);
+        e->setAvoid(true);
+        edges_to_revert.push_back(e);
     }
 
     auto s = g->findVertex(start);
@@ -53,6 +56,10 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
                     }
                 }
             }
+        }
+
+        for (auto e : edges_to_revert) {
+            e->setAvoid(false);
         }
     }
 }
