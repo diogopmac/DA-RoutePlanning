@@ -344,12 +344,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     DataReader reader = DataReader();
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
 
-    if (mode == "driving") {
-        res = bestPath(&graph, source, destination, "drivable");
-    }
-    else if (mode == "walking") {
-        res = bestPath(&graph, source, destination, "walkable");
-    }
+    res = bestPath(&graph, source, destination, mode);
 
     out << "Source:" << graph.findVertex(source)->getID() << '\n';
     out << "Destination:" << graph.findVertex(destination)->getID() << '\n';
@@ -362,12 +357,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     }
     out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    if (mode == "driving") {
-        res2 = bestPath(&graph, source, destination, "drivable", true, {}, avoid_edges);
-    }
-    else if (mode == "walking") {
-        res2 = bestPath(&graph, source, destination, "walkable", true, {}, avoid_edges);
-    }
+    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     out << "AlternativeDrivingRoute:";
     if (graph.findVertex(destination)->getDist() == INF) {
