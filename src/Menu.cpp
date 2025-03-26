@@ -100,6 +100,9 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     return reconstructPath(g, start, end);
 }
 
+
+// Para testares isto, é só entrares em Best Route Mode, selecionar driving-walking.
+// O Max walking time está como 18, podes mudar diretamente na linha 225. Depois faço o input para isso.
 std::vector<int> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::map<int, Path> paths;
@@ -187,9 +190,9 @@ void Menu::DefaultMenu() {
     vector<int> res2;
     vector<pair<int,int>> avoid_edges;
 
-    while (mode != "driving" && mode != "walking") {
+    while (mode != "driving" && mode != "walking" && mode != "driving-walking") {
         cout << "Enter mode: "; cin >> mode;
-        if (mode != "driving" && mode != "walking") {
+        if (mode != "driving" && mode != "walking" && mode != "driving-walking") {
             cout << "ERROR: Wrong mode!" << endl;
         }
     }
@@ -218,7 +221,13 @@ void Menu::DefaultMenu() {
         }
     }
 
-    res = bestPath(&graph, source, destination, mode);
+    if (mode == "drivin-walking") {
+        res = bestPathDriveWalk(&graph, source, destination, 18, false);
+    }
+    else {
+        res = bestPath(&graph, source, destination, mode);
+    }
+
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
