@@ -22,7 +22,7 @@ public:
 
     std::vector<int> reconstructPath(Graph<int> *g, const int &start, const int &end);
     std::vector<int> bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
-    std::vector<int> bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
+    std::vector<int> bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, int max_walking, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
     void dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
     bool relax(Edge<int> *e);
 };

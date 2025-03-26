@@ -2,8 +2,11 @@
 // Created by diogo on 09/03/2025.
 //
 #include "../headers/Menu.h"
+
+#include <climits>
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <sstream>
 
 #include "../headers/DataReader.h"
@@ -97,17 +100,31 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     return reconstructPath(g, start, end);
 }
 
-std::vector<int> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end,
+std::vector<int> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
-    vector<Path> available_paths;
+    std::map<int, Path> paths;
+    std::vector<int> res;
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
         auto p = reconstructPath(g, start, v->getID());
         if (!p.empty()) {
-            available_paths.push_back({p, v->getDist()});
+            paths[v->getID()] = {p, v->getDist()};
         }
     }
+    double lowest = INT_MAX;
+    dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
+    for (auto v : g->getVertexSet()) {
+        if (!v->getParking() && v->getDist() > max_walking) continue;
+        auto p = reconstructPath(g, v->getID(), end);
+        if (!p.empty()) {
+            if (v->getDist() + paths[v->getID()].weight < lowest) {
+                lowest = v->getDist() + paths[v->getID()].weight;
+                res = p;
+            }
+        }
+    }
+    return res;
 }
 
 Menu::Menu() = default;
