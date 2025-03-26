@@ -284,27 +284,65 @@ void Menu::RestrictedMenu() {
         }
     }
 
-
-    if (mode == "driving") {
-        res = bestPath(&graph, source, destination, "drivable", false, avoid_nodes, avoid_edges);
-    }
-    else if (mode == "walking") {
-        res = bestPath(&graph, source, destination, "walkable", false, avoid_nodes, avoid_edges);
+    while (true) {
+        cout << "Enter Include Node: ";
+        getline(cin, input);
+        if (input.empty()) {
+            includeNode = -1;
+            break;
+        }
+        try {
+            includeNode = stoi(input);
+            break;
+        }
+        catch (invalid_argument &e) {}
     }
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
     cout << "RestrictedDrivingRoute:";
-    if (graph.findVertex(destination)->getDist() == INF) {
-        cout << "none" << endl;
-    } else {
-        for (int i = 0; i < res.size(); i++) {
-            if (i + 1 < res.size()) {
-                avoid_edges.emplace_back(res[i], res[i+1]);
-            }
-            cout << res[i] << (i == res.size() - 1 ? "" : ",");
+
+    if (includeNode == -1) {
+        if (mode == "driving") {
+            res = bestPath(&graph, source, destination, "drivable", false, avoid_nodes, avoid_edges);
         }
-        cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+        else if (mode == "walking") {
+            res = bestPath(&graph, source, destination, "walkable", false, avoid_nodes, avoid_edges);
+        }
+
+        if (graph.findVertex(destination)->getDist() == INF) {
+            cout << "none" << endl;
+        } else {
+            for (int i = 0; i < res.size(); i++) {
+                if (i + 1 < res.size()) {
+                    avoid_edges.emplace_back(res[i], res[i+1]);
+                }
+                cout << res[i] << (i == res.size() - 1 ? "" : ",");
+            }
+            cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+        }
+    }
+    else {
+        if (mode == "driving") {
+            res = bestPath(&graph, source, includeNode, "drivable", false, avoid_nodes, avoid_edges);
+            double includeDist = graph.findVertex(includeNode)->getDist();
+            if (includeDist != INF) {
+                res2 = bestPath(&graph, includeNode, destination, "drivable", true, avoid_nodes, avoid_edges);
+
+                if (graph.findVertex(destination)->getDist() != INF) {
+
+                    for (int i = 0; i < res.size(); i++) {
+                        cout << res[i] << ",";
+                    }
+                    for (int i = 1; i < res2.size(); i++) {
+                        cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                    }
+                    cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
+
+                } else cout << "none" << endl;
+            }
+            else cout << "none" << endl;
+        }
     }
 }
 
