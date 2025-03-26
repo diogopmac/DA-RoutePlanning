@@ -343,6 +343,26 @@ void Menu::RestrictedMenu() {
             }
             else cout << "none" << endl;
         }
+        if (mode == "walking") {
+            res = bestPath(&graph, source, includeNode, "walkable", false, avoid_nodes, avoid_edges);
+            double includeDist = graph.findVertex(includeNode)->getDist();
+            if (includeDist != INF) {
+                res2 = bestPath(&graph, includeNode, destination, "walkable", true, avoid_nodes, avoid_edges);
+
+                if (graph.findVertex(destination)->getDist() != INF) {
+
+                    for (int i = 0; i < res.size(); i++) {
+                        cout << res[i] << ",";
+                    }
+                    for (int i = 1; i < res2.size(); i++) {
+                        cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                    }
+                    cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
+
+                } else cout << "none" << endl;
+            }
+            else cout << "none" << endl;
+        }
     }
 }
 
