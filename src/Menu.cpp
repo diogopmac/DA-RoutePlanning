@@ -10,6 +10,11 @@
 
 using namespace std;
 
+struct Path {
+    std::vector<int> path;
+    double weight;
+};
+
 bool Menu::relax(Edge<int> *e) {
     if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
 
@@ -94,7 +99,15 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
 
 std::vector<int> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+    vector<Path> available_paths;
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
+    for (auto v : g->getVertexSet()) {
+        if (!v->getParking()) continue;
+        auto p = reconstructPath(g, start, v->getID());
+        if (!p.empty()) {
+            available_paths.push_back({p, v->getDist()});
+        }
+    }
 }
 
 Menu::Menu() = default;
