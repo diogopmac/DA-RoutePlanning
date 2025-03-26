@@ -178,12 +178,7 @@ void Menu::DefaultMenu() {
         }
     }
 
-    if (mode == "driving") {
-        res = bestPath(&graph, source, destination, "drivable");
-    }
-    else if (mode == "walking") {
-        res = bestPath(&graph, source, destination, "walkable");
-    }
+    res = bestPath(&graph, source, destination, mode);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -196,12 +191,7 @@ void Menu::DefaultMenu() {
     }
     cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    if (mode == "driving") {
-        res2 = bestPath(&graph, source, destination, "drivable", true, {}, avoid_edges);
-    }
-    else if (mode == "walking") {
-        res2 = bestPath(&graph, source, destination, "walkable", true, {}, avoid_edges);
-    }
+    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     cout << "AlternativeDrivingRoute:";
     if (graph.findVertex(destination)->getDist() == INF) {
@@ -303,12 +293,7 @@ void Menu::RestrictedMenu() {
     cout << "RestrictedDrivingRoute:";
 
     if (includeNode == -1) {
-        if (mode == "driving") {
-            res = bestPath(&graph, source, destination, "drivable", false, avoid_nodes, avoid_edges);
-        }
-        else if (mode == "walking") {
-            res = bestPath(&graph, source, destination, "walkable", false, avoid_nodes, avoid_edges);
-        }
+        res = bestPath(&graph, source, destination, mode, false, avoid_nodes, avoid_edges);
 
         if (graph.findVertex(destination)->getDist() == INF) {
             cout << "none" << endl;
@@ -323,46 +308,24 @@ void Menu::RestrictedMenu() {
         }
     }
     else {
-        if (mode == "driving") {
-            res = bestPath(&graph, source, includeNode, "drivable", false, avoid_nodes, avoid_edges);
-            double includeDist = graph.findVertex(includeNode)->getDist();
-            if (includeDist != INF) {
-                res2 = bestPath(&graph, includeNode, destination, "drivable", true, avoid_nodes, avoid_edges);
+        res = bestPath(&graph, source, includeNode, mode, false, avoid_nodes, avoid_edges);
+        double includeDist = graph.findVertex(includeNode)->getDist();
+        if (includeDist != INF) {
+            res2 = bestPath(&graph, includeNode, destination, mode, true, avoid_nodes, avoid_edges);
 
-                if (graph.findVertex(destination)->getDist() != INF) {
+            if (graph.findVertex(destination)->getDist() != INF) {
 
-                    for (int i = 0; i < res.size(); i++) {
-                        cout << res[i] << ",";
-                    }
-                    for (int i = 1; i < res2.size(); i++) {
-                        cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
-                    }
-                    cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
+                for (int i = 0; i < res.size(); i++) {
+                    cout << res[i] << ",";
+                }
+                for (int i = 1; i < res2.size(); i++) {
+                    cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                }
+                cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
 
-                } else cout << "none" << endl;
-            }
-            else cout << "none" << endl;
+            } else cout << "none" << endl;
         }
-        if (mode == "walking") {
-            res = bestPath(&graph, source, includeNode, "walkable", false, avoid_nodes, avoid_edges);
-            double includeDist = graph.findVertex(includeNode)->getDist();
-            if (includeDist != INF) {
-                res2 = bestPath(&graph, includeNode, destination, "walkable", true, avoid_nodes, avoid_edges);
-
-                if (graph.findVertex(destination)->getDist() != INF) {
-
-                    for (int i = 0; i < res.size(); i++) {
-                        cout << res[i] << ",";
-                    }
-                    for (int i = 1; i < res2.size(); i++) {
-                        cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
-                    }
-                    cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
-
-                } else cout << "none" << endl;
-            }
-            else cout << "none" << endl;
-        }
+        else cout << "none" << endl;
     }
 }
 
