@@ -63,10 +63,9 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     }
 }
 
-std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+std::vector<int> Menu::reconstructPath(Graph<int> *g, const int &start, const int &end) {
     std::vector<int> res;
-    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
+
     auto v = g->findVertex(end);
     if (v == nullptr || v->getDist() == INF) return res;
 
@@ -85,6 +84,17 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
         std::cout << "ERROR: Origin not found!" << std::endl;
     }
     return res;
+}
+
+std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
+    return reconstructPath(g, start, end);
+}
+
+std::vector<int> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+    dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
 }
 
 Menu::Menu() = default;
