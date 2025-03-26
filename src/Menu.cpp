@@ -265,7 +265,6 @@ void Menu::RestrictedMenu() {
 
     if (!input.empty()) {
         stringstream ss(input);
-        cout << input << endl;
         char ignore;
         int orig, dest;
         while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
@@ -343,8 +342,8 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
 
     DataReader reader = DataReader();
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
-
-    res = bestPath(&graph, source, destination, mode);
+    
+    res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
 
     out << "Source:" << graph.findVertex(source)->getID() << '\n';
     out << "Destination:" << graph.findVertex(destination)->getID() << '\n';
@@ -357,7 +356,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     }
     out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
+    /*res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     out << "AlternativeDrivingRoute:";
     if (graph.findVertex(destination)->getDist() == INF) {
@@ -366,7 +365,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     else {
         for (int i = 0; i < res2.size(); i++) out << res2[i] << (i == res2.size() - 1 ? "" : ",");
         out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
-    }
+    }*/
 
     out.close();
 

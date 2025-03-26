@@ -111,6 +111,39 @@ void DataReader::readInputFile(const std::string& inFile, std::string& mode,
         else if (discriminant == "Destination") {
             destination = stoi(value);
         }
+        else if (discriminant == "AvoidNodes") {
+            getline(iss, value);
+            if (!value.empty()) {
+                std::istringstream iss(value);
+                int node;
+                while (iss >> node) {
+                    avoidNodes.push_back(node);
+                }
+            }
+
+        }
+        else if (discriminant == "AvoidSegments") {
+            getline(iss, value);
+            if (!value.empty()) {
+                std::istringstream iss(value);
+                char ignore;
+                int orig, dest;
+                while (iss >> ignore >> orig >> ignore >> dest >> ignore) {
+                    avoidSegments.emplace_back(orig, dest);
+                    if (iss.peek() == ',') iss.ignore();
+                }
+            }
+        }
+        else if (discriminant == "IncludeNode") {
+            getline(iss, value);
+            if (!value.empty()) {
+                includeNode = stoi(value);
+            }
+        }
+        else {
+            cerr << "Invalid input." << endl;
+            exit(1);
+        }
 
     }
     input.close();
