@@ -131,9 +131,10 @@ void Menu::MainMenu() {
         cout << "\nIndividual Route Planning Tool\n"
                 "Desenho de Algoritmos 2025\n"
                 "[1] Best Route Mode\n"
-                "[2] Driving-Walking Mode\n"
-                "[3] Batch Mode\n"
-                "[4] Leave application\n" << endl;
+                "[2] Restricted Route Mode\n"
+                "[3] Driving-Walking Mode\n"
+                "[4] Batch Mode\n"
+                "[5] Leave application\n" << endl;
         cin >> option;
         switch (option) {
             case 1: {
@@ -141,21 +142,25 @@ void Menu::MainMenu() {
                 break;
             }
             case 2: {
-                cout << "Work in progress..." << endl;
+                RestrictedMenu();
                 break;
             }
             case 3: {
+                cout << "Work in progress..." << endl;
+                break;
+            }
+            case 4: {
                 MenuBatchMode("../input.txt", "../output.txt");
                 break;
             }
-            case 4:
+            case 5:
                 cout << "Leaving" << endl;
                 break;
             default:
                 cout << "Invalid Input!" << endl;
                 break;
         }
-    } while (option != 4);
+    } while (option != 5);
 }
 
 void Menu::DefaultMenu() {
@@ -196,12 +201,7 @@ void Menu::DefaultMenu() {
         }
     }
 
-    if (mode == "driving") {
-        res = bestPath(&graph, source, destination, "drivable");
-    }
-    else if (mode == "walking") {
-        res = bestPath(&graph, source, destination, "walkable");
-    }
+    res = bestPath(&graph, source, destination, mode);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -214,12 +214,7 @@ void Menu::DefaultMenu() {
     }
     cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    if (mode == "driving") {
-        res2 = bestPath(&graph, source, destination, "drivable", true, {}, avoid_edges);
-    }
-    else if (mode == "walking") {
-        res2 = bestPath(&graph, source, destination, "walkable", true, {}, avoid_edges);
-    }
+    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     cout << "AlternativeDrivingRoute:";
     if (graph.findVertex(destination)->getDist() == INF) {
@@ -228,6 +223,132 @@ void Menu::DefaultMenu() {
     else {
         for (int i = 0; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
         cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+    }
+}
+
+void Menu::RestrictedMenu() {
+    string mode;
+    int source, destination;
+    vector<int> res;
+    vector<int> res2;
+
+    string restrictedStr;
+    bool restricted;
+    vector<int> avoid_nodes;
+    vector<pair<int,int>> avoid_edges;
+    int includeNode;
+
+    while (mode != "driving" && mode != "walking") {
+        cout << "Enter mode: "; cin >> mode;
+        if (mode != "driving" && mode != "walking") {
+            cout << "ERROR: Wrong mode!" << endl;
+        }
+    }
+
+    while (true) {
+        cout << "Enter Source: ";
+        if (cin >> source) {
+            if (graph.findVertex(source)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    while (true) {
+        cout << "Enter Destination: ";
+        if (cin >> destination) {
+            if (graph.findVertex(destination)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    cout << "Enter Avoiding Nodes: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string input;
+    getline(cin, input);
+
+    if (!input.empty()) {
+        int node;
+        stringstream ss(input);
+        while (ss >> node) {
+            avoid_nodes.push_back(node);
+        }
+    }
+
+    cout << "Enter Avoiding Edges: ";
+    getline(cin, input);
+
+    if (!input.empty()) {
+        stringstream ss(input);
+        cout << input << endl;
+        char ignore;
+        int orig, dest;
+        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
+            avoid_edges.emplace_back(orig, dest);
+            if (ss.peek() == ',') ss.ignore();
+        }
+    }
+
+    while (true) {
+        cout << "Enter Include Node: ";
+        getline(cin, input);
+        if (input.empty()) {
+            includeNode = -1;
+            break;
+        }
+        try {
+            includeNode = stoi(input);
+            break;
+        }
+        catch (invalid_argument &e) {}
+    }
+
+    cout << "Source:" << graph.findVertex(source)->getID() << endl;
+    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+    cout << "RestrictedDrivingRoute:";
+
+    if (includeNode == -1) {
+        res = bestPath(&graph, source, destination, mode, false, avoid_nodes, avoid_edges);
+
+        if (graph.findVertex(destination)->getDist() == INF) {
+            cout << "none" << endl;
+        } else {
+            for (int i = 0; i < res.size(); i++) {
+                if (i + 1 < res.size()) {
+                    avoid_edges.emplace_back(res[i], res[i+1]);
+                }
+                cout << res[i] << (i == res.size() - 1 ? "" : ",");
+            }
+            cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+        }
+    }
+    else {
+        res = bestPath(&graph, source, includeNode, mode, false, avoid_nodes, avoid_edges);
+        double includeDist = graph.findVertex(includeNode)->getDist();
+        if (includeDist != INF) {
+            res2 = bestPath(&graph, includeNode, destination, mode, true, avoid_nodes, avoid_edges);
+
+            if (graph.findVertex(destination)->getDist() != INF) {
+
+                for (int i = 0; i < res.size(); i++) {
+                    cout << res[i] << ",";
+                }
+                for (int i = 1; i < res2.size(); i++) {
+                    cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                }
+                cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
+
+            } else cout << "none" << endl;
+        }
+        else cout << "none" << endl;
     }
 }
 
@@ -246,12 +367,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     DataReader reader = DataReader();
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
 
-    if (mode == "driving") {
-        res = bestPath(&graph, source, destination, "drivable");
-    }
-    else if (mode == "walking") {
-        res = bestPath(&graph, source, destination, "walkable");
-    }
+    res = bestPath(&graph, source, destination, mode);
 
     out << "Source:" << graph.findVertex(source)->getID() << '\n';
     out << "Destination:" << graph.findVertex(destination)->getID() << '\n';
@@ -264,12 +380,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     }
     out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    if (mode == "driving") {
-        res2 = bestPath(&graph, source, destination, "drivable", true, {}, avoid_edges);
-    }
-    else if (mode == "walking") {
-        res2 = bestPath(&graph, source, destination, "walkable", true, {}, avoid_edges);
-    }
+    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     out << "AlternativeDrivingRoute:";
     if (graph.findVertex(destination)->getDist() == INF) {
