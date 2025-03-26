@@ -67,11 +67,11 @@ void DataReader::readDistances(const std::string& fileName, Graph<int>& graph) {
 
         if (drivingStr != "X") {
             driving = stod(drivingStr);
-            if(!graph.addBidirectionalEdge(location1, location2, driving, "drivable")) exit(1);
+            if(!graph.addBidirectionalEdge(location1, location2, driving, "driving")) exit(1);
         }
         if (walkingStr != "X") {
             walking = stod(walkingStr);
-            if(!graph.addBidirectionalEdge(location2, location1, walking, "walkable")) exit(1);
+            if(!graph.addBidirectionalEdge(location2, location1, walking, "walking")) exit(1);
         }
 
     }
