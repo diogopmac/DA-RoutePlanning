@@ -2,13 +2,17 @@
 // Created by diogo on 09/03/2025.
 //
 #include "../headers/Menu.h"
+
+#include <climits>
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <sstream>
 
 #include "../headers/DataReader.h"
 
 using namespace std;
+
 
 bool Menu::relax(Edge<int> *e) {
     if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
@@ -63,10 +67,9 @@ void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transpor
     }
 }
 
-std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+std::vector<int> Menu::reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible=true) {
     std::vector<int> res;
-    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
+
     auto v = g->findVertex(end);
     if (v == nullptr || v->getDist() == INF) return res;
 
@@ -77,12 +80,60 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
         res.push_back(v->getID());
     }
 
-    reverse(res.begin(), res.end());
-    if (res.empty() || res[0] != g->findVertex(start)->getID()) {
+    if (reversible) reverse(res.begin(), res.end());
+    if (res.empty() || (reversible ? res[0] : res.back()) != g->findVertex(start)->getID()) {
         std::cout << res[0] << std::endl;
         std::cout << g->findVertex(start)->getID() << std::endl;
         for (auto r : res) std::cout << r << " ";
         std::cout << "ERROR: Origin not found!" << std::endl;
+    }
+    return res;
+}
+
+std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
+    return reconstructPath(g, start, end);
+}
+
+std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+    std::map<int, Path> paths;
+    std::pair<Path, Path> res;
+    dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
+    for (auto v : g->getVertexSet()) {
+        if (!v->getParking()) continue;
+        if (v->getID() == start) continue;
+        if (v->getID() == end) continue;
+
+        auto p = reconstructPath(g, start, v->getID());
+
+        if (!p.empty()) {
+            paths[v->getID()] = {p, v->getDist()};
+        }
+    }
+    double lowest = INF;
+    double walkTime = 0;
+    dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
+    for (auto v : g->getVertexSet()) {
+        if (!v->getParking()) continue;
+        if (v->getID() == start) continue;
+        if (v->getDist() > max_walking) continue;
+        if (v->getID() == end) continue;
+
+        auto p = reconstructPath(g, end, v->getID(), false);
+
+        if (!p.empty()) {
+            if (v->getDist() + paths[v->getID()].weight < lowest ||
+                (v->getDist() + paths[v->getID()].weight == lowest && v->getDist() > walkTime)) {
+
+                lowest = v->getDist() + paths[v->getID()].weight;
+                walkTime = v->getDist();
+                res.first = {paths[v->getID()].path, paths[v->getID()].weight};
+                res.second = {p, v->getDist()};
+
+            }
+        }
     }
     return res;
 }
@@ -123,7 +174,7 @@ void Menu::MainMenu() {
                 break;
             }
             case 3: {
-                cout << "Work in progress..." << endl;
+                MenuDrivingWalking();
                 break;
             }
             case 4: {
@@ -179,6 +230,7 @@ void Menu::DefaultMenu() {
     }
 
     res = bestPath(&graph, source, destination, mode);
+
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -328,6 +380,93 @@ void Menu::RestrictedMenu() {
         else cout << "none" << endl;
     }
 }
+
+void Menu::MenuDrivingWalking() {
+    int source, destination, maxWalking;
+    pair<Path, Path> res;
+    vector<int> avoid_nodes;
+    vector<pair<int,int>> avoid_edges;
+
+    while (true) {
+        cout << "Enter Source: ";
+        if (cin >> source) {
+            if (graph.findVertex(source)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    while (true) {
+        cout << "Enter Destination: ";
+        if (cin >> destination) {
+            if (graph.findVertex(destination)) break;
+            cout << "ERROR: No such vertex!" << endl;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    while (true) {
+        cout << "Enter Max Walking Time: ";
+        if (cin >> maxWalking) {
+            break;
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    cout << "Enter Avoiding Nodes: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string input;
+    getline(cin, input);
+
+    if (!input.empty()) {
+        int node;
+        stringstream ss(input);
+        while (ss >> node) {
+            avoid_nodes.push_back(node);
+        }
+    }
+
+    cout << "Enter Avoiding Edges: ";
+    getline(cin, input);
+
+    if (!input.empty()) {
+        stringstream ss(input);
+        cout << input << endl;
+        char ignore;
+        int orig, dest;
+        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
+            avoid_edges.emplace_back(orig, dest);
+            if (ss.peek() == ',') ss.ignore();
+        }
+    }
+
+    res = bestPathDriveWalk(&graph, source, destination, maxWalking, false, avoid_nodes, avoid_edges);
+
+    cout << "Source:" << graph.findVertex(source)->getID() << endl;
+    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+    cout << "DrivingRoute:";
+    for (int i = 0; i < res.first.path.size(); i++) {
+        cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+    } cout << "(" << res.first.weight << ")" << endl;
+    cout << "ParkingNode:" << res.second.path[0] << endl;
+    cout << "WalkingRoute:";
+    for (int i = 0; i < res.second.path.size(); i++) {
+        cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+    } cout << "(" << res.second.weight << ")" << endl;
+    cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
+
+}
+
 
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
