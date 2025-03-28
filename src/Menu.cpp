@@ -96,7 +96,7 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     return reconstructPath(g, start, end);
 }
 
-std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
+std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::map<int, Path> paths;
     std::pair<Path, Path> res;
@@ -112,14 +112,21 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
             paths[v->getID()] = {p, v->getDist()};
         }
     }
+    if (paths.empty()) {
+        message = "no-parking";
+        return res;
+    }
+    
     double lowest = INF;
     double walkTime = 0;
+    bool valid_walkTime = false;
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
         if (v->getID() == start) continue;
-        if (v->getDist() > max_walking) continue;
         if (v->getID() == end) continue;
+        if (v->getDist() > max_walking) continue;
+        valid_walkTime = true;
 
         auto p = reconstructPath(g, end, v->getID(), false);
 
@@ -129,11 +136,14 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
 
                 lowest = v->getDist() + paths[v->getID()].weight;
                 walkTime = v->getDist();
-                res.first = {paths[v->getID()].path, paths[v->getID()].weight};
+                res.first = paths[v->getID()];
                 res.second = {p, v->getDist()};
 
             }
         }
+    }
+    if (!valid_walkTime) {
+        message = "walking-time";
     }
     return res;
 }
@@ -386,6 +396,7 @@ void Menu::MenuDrivingWalking() {
     pair<Path, Path> res;
     vector<int> avoid_nodes;
     vector<pair<int,int>> avoid_edges;
+    string message;
 
     while (true) {
         cout << "Enter Source: ";
@@ -450,21 +461,30 @@ void Menu::MenuDrivingWalking() {
         }
     }
 
-    res = bestPathDriveWalk(&graph, source, destination, maxWalking, false, avoid_nodes, avoid_edges);
+    res = bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
-    cout << "DrivingRoute:";
-    for (int i = 0; i < res.first.path.size(); i++) {
-        cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
-    } cout << "(" << res.first.weight << ")" << endl;
-    cout << "ParkingNode:" << res.second.path[0] << endl;
-    cout << "WalkingRoute:";
-    for (int i = 0; i < res.second.path.size(); i++) {
-        cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
-    } cout << "(" << res.second.weight << ")" << endl;
-    cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
-
+    if (message.empty()) {
+        cout << "DrivingRoute:";
+        for (int i = 0; i < res.first.path.size(); i++) {
+            cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.first.weight << ")" << endl;
+        cout << "ParkingNode:" << res.second.path[0] << endl;
+        cout << "WalkingRoute:";
+        for (int i = 0; i < res.second.path.size(); i++) {
+            cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.second.weight << ")" << endl;
+        cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
+    }
+    else {
+        cout << "DrivingRoute:" << endl;
+        cout << "ParkingNode:" << endl;
+        cout << "WalkingRoute:" << endl;
+        cout << "TotalTime:" << endl;
+        if (message == "walking-time") cout << "No possible route with max. walking time of " << maxWalking << " minutes." << endl;
+        else if (message == "no-parking") cout << "No parking found." << endl;
+    }
 }
 
 
