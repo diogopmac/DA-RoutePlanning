@@ -119,12 +119,14 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
     
     double lowest = INF;
     double walkTime = 0;
+    bool valid_walkTime = false;
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
         if (v->getID() == start) continue;
-        if (v->getDist() > max_walking) continue;
         if (v->getID() == end) continue;
+        if (v->getDist() > max_walking) continue;
+        valid_walkTime = true;
 
         auto p = reconstructPath(g, end, v->getID(), false);
 
@@ -140,7 +142,7 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
             }
         }
     }
-    if (res.empty()) {
+    if (!valid_walkTime) {
         message = "walking-time";
     }
     return res;
