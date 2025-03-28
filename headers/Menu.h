@@ -25,6 +25,10 @@ public:
     void MenuBatchMode(const std::string& inFile, const std::string& outFile);
     void MenuDrivingWalking();
     void readGraph();
+    int getIntValue(const std::string &s, const bool &node);
+    std::string getTransportationMode();
+    void getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<std::pair<int, int>> &avoid_edges);
+    int getIncludeNode();
 
     std::vector<int> reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible);
     std::vector<int> bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);

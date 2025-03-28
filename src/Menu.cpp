@@ -161,6 +161,85 @@ void Menu::readGraph() {
     reader.readDistances("../docs/DisSample.csv", graph);
 }
 
+int Menu::getIntValue(const string &s, const bool &node) {
+    int ret;
+    while (true) {
+        cout << s;
+        if (cin >> ret) {
+            if (node) {
+                if (graph.findVertex(ret)) break;
+                cout << "ERROR: No such vertex!" << endl;
+            } else {
+                break;
+            }
+        } else {
+            cout << "ERROR: Wrong input!" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+    return ret;
+}
+
+std::string Menu::getTransportationMode() {
+    std::string mode;
+    while (mode != "driving" && mode != "walking") {
+        cout << "Enter mode: "; cin >> mode;
+        if (mode != "driving" && mode != "walking") {
+            cout << "ERROR: Wrong mode!" << endl;
+        }
+    }
+    return mode;
+}
+
+void Menu::getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<std::pair<int, int>> &avoid_edges) {
+    cout << "Enter Avoiding Nodes: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string input;
+    getline(cin, input);
+
+    if (!input.empty()) {
+        int node;
+        stringstream ss(input);
+        while (ss >> node) {
+            avoid_nodes.push_back(node);
+        }
+    }
+
+    cout << "Enter Avoiding Edges: ";
+    getline(cin, input);
+
+    if (!input.empty()) {
+        stringstream ss(input);
+        char ignore;
+        int orig, dest;
+        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
+            avoid_edges.emplace_back(orig, dest);
+            if (ss.peek() == ',') ss.ignore();
+        }
+    }
+}
+
+int Menu::getIncludeNode() {
+    int includeNode;
+    string input;
+    while (true) {
+        cout << "Enter Include Node: ";
+        getline(cin, input);
+        if (input.empty()) {
+            includeNode = -1;
+            break;
+        }
+        try {
+            includeNode = stoi(input);
+            break;
+        }
+        catch (invalid_argument &e) {}
+    }
+    return includeNode;
+}
+
 void Menu::MainMenu() {
     int option;
     readGraph();
@@ -208,39 +287,11 @@ void Menu::DefaultMenu() {
     vector<int> res2;
     vector<pair<int,int>> avoid_edges;
 
-    while (mode != "driving" && mode != "walking") {
-        cout << "Enter mode: "; cin >> mode;
-        if (mode != "driving" && mode != "walking") {
-            cout << "ERROR: Wrong mode!" << endl;
-        }
-    }
-
-    while (true) {
-        cout << "Enter Source: ";
-        if (cin >> source) {
-            if (graph.findVertex(source)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    while (true) {
-        cout << "Enter Destination: ";
-        if (cin >> destination) {
-            if (graph.findVertex(destination)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
+    mode = getTransportationMode();
+    source = getIntValue("Enter Source: ", true);
+    destination = getIntValue("Enter Destination: ", true);
 
     res = bestPath(&graph, source, destination, mode);
-
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -277,77 +328,12 @@ void Menu::RestrictedMenu() {
     vector<pair<int,int>> avoid_edges;
     int includeNode;
 
-    while (mode != "driving" && mode != "walking") {
-        cout << "Enter mode: "; cin >> mode;
-        if (mode != "driving" && mode != "walking") {
-            cout << "ERROR: Wrong mode!" << endl;
-        }
-    }
+    mode = getTransportationMode();
+    source = getIntValue("Enter Source: ", true);
+    destination = getIntValue("Enter Destination: ", true);
 
-    while (true) {
-        cout << "Enter Source: ";
-        if (cin >> source) {
-            if (graph.findVertex(source)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    while (true) {
-        cout << "Enter Destination: ";
-        if (cin >> destination) {
-            if (graph.findVertex(destination)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    cout << "Enter Avoiding Nodes: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    string input;
-    getline(cin, input);
-
-    if (!input.empty()) {
-        int node;
-        stringstream ss(input);
-        while (ss >> node) {
-            avoid_nodes.push_back(node);
-        }
-    }
-
-    cout << "Enter Avoiding Edges: ";
-    getline(cin, input);
-
-    if (!input.empty()) {
-        stringstream ss(input);
-        char ignore;
-        int orig, dest;
-        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
-            avoid_edges.emplace_back(orig, dest);
-            if (ss.peek() == ',') ss.ignore();
-        }
-    }
-
-    while (true) {
-        cout << "Enter Include Node: ";
-        getline(cin, input);
-        if (input.empty()) {
-            includeNode = -1;
-            break;
-        }
-        try {
-            includeNode = stoi(input);
-            break;
-        }
-        catch (invalid_argument &e) {}
-    }
+    getRestrictedParameters(avoid_nodes, avoid_edges);
+    includeNode = getIncludeNode();
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -397,68 +383,10 @@ void Menu::MenuDrivingWalking() {
     vector<pair<int,int>> avoid_edges;
     string message;
 
-    while (true) {
-        cout << "Enter Source: ";
-        if (cin >> source) {
-            if (graph.findVertex(source)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    while (true) {
-        cout << "Enter Destination: ";
-        if (cin >> destination) {
-            if (graph.findVertex(destination)) break;
-            cout << "ERROR: No such vertex!" << endl;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    while (true) {
-        cout << "Enter Max Walking Time: ";
-        if (cin >> maxWalking) {
-            break;
-        } else {
-            cout << "ERROR: Wrong input!" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-
-    cout << "Enter Avoiding Nodes: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    string input;
-    getline(cin, input);
-
-    if (!input.empty()) {
-        int node;
-        stringstream ss(input);
-        while (ss >> node) {
-            avoid_nodes.push_back(node);
-        }
-    }
-
-    cout << "Enter Avoiding Edges: ";
-    getline(cin, input);
-
-    if (!input.empty()) {
-        stringstream ss(input);
-        cout << input << endl;
-        char ignore;
-        int orig, dest;
-        while (ss >> ignore >> orig >> ignore >> dest >> ignore) {
-            avoid_edges.emplace_back(orig, dest);
-            if (ss.peek() == ',') ss.ignore();
-        }
-    }
+    source = getIntValue("Enter Source: ", true);
+    destination = getIntValue("Enter Destination: ", true);
+    maxWalking = getIntValue("Enter Max Walking Time: ", false);
+    getRestrictedParameters(avoid_nodes, avoid_edges);
 
     res = bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
 
