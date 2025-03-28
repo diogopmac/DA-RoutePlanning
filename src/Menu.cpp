@@ -96,9 +96,6 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     return reconstructPath(g, start, end);
 }
 
-
-// Para testares isto, é só entrares em Best Route Mode, selecionar driving-walking.
-// O Max walking time está como 18, podes mudar diretamente na linha 225. Depois faço o input para isso.
 std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::map<int, Path> paths;
@@ -106,7 +103,11 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
+        if (v->getID() == start) continue;
+        if (v->getID() == end) continue;
+
         auto p = reconstructPath(g, start, v->getID());
+
         if (!p.empty()) {
             paths[v->getID()] = {p, v->getDist()};
         }
@@ -115,6 +116,7 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
+        if (v->getID() == start) continue;
         if (v->getDist() > max_walking) continue;
         if (v->getID() == end) continue;
 
