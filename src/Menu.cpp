@@ -97,7 +97,7 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
 }
 
 std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}, std::string &message) {
     std::map<int, Path> paths;
     std::pair<Path, Path> res;
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
@@ -112,6 +112,11 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
             paths[v->getID()] = {p, v->getDist()};
         }
     }
+    if (paths.empty()) {
+        message = "no-parking";
+        return res;
+    }
+    
     double lowest = INF;
     double walkTime = 0;
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
@@ -129,11 +134,14 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
 
                 lowest = v->getDist() + paths[v->getID()].weight;
                 walkTime = v->getDist();
-                res.first = {paths[v->getID()].path, paths[v->getID()].weight};
+                res.first = paths[v->getID()];
                 res.second = {p, v->getDist()};
 
             }
         }
+    }
+    if (res.empty()) {
+        message = "walking-time";
     }
     return res;
 }
