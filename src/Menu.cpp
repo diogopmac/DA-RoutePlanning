@@ -113,6 +113,7 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
         }
     }
     double lowest = INF;
+    double walkTime = 0;
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
@@ -123,10 +124,14 @@ std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, c
         auto p = reconstructPath(g, end, v->getID(), false);
 
         if (!p.empty()) {
-            if (v->getDist() + paths[v->getID()].weight < lowest) {
+            if (v->getDist() + paths[v->getID()].weight < lowest ||
+                (v->getDist() + paths[v->getID()].weight == lowest && v->getDist() > walkTime)) {
+
                 lowest = v->getDist() + paths[v->getID()].weight;
+                walkTime = v->getDist();
                 res.first = {paths[v->getID()].path, paths[v->getID()].weight};
                 res.second = {p, v->getDist()};
+
             }
         }
     }
