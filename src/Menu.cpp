@@ -96,8 +96,8 @@ std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end,
     return reconstructPath(g, start, end);
 }
 
-std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}, std::string &message) {
+std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
+                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::map<int, Path> paths;
     std::pair<Path, Path> res;
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
@@ -394,6 +394,7 @@ void Menu::MenuDrivingWalking() {
     pair<Path, Path> res;
     vector<int> avoid_nodes;
     vector<pair<int,int>> avoid_edges;
+    string message;
 
     while (true) {
         cout << "Enter Source: ";
@@ -458,7 +459,7 @@ void Menu::MenuDrivingWalking() {
         }
     }
 
-    res = bestPathDriveWalk(&graph, source, destination, maxWalking, false, avoid_nodes, avoid_edges);
+    res = bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
