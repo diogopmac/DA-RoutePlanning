@@ -336,36 +336,81 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     ofstream out(outFile);
 
     string mode;
-    int source, destination, includeNode;
+    int source, destination;
+    int includeNode = -1;
     vector<int> avoidNodes;
     vector<pair<int,int>> avoid_edges;
 
     DataReader reader = DataReader();
     reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
-    
-    res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
 
     out << "Source:" << graph.findVertex(source)->getID() << '\n';
     out << "Destination:" << graph.findVertex(destination)->getID() << '\n';
-    out << "BestDrivingRoute:";
-    for (int i = 0; i < res.size(); i++) {
-        if (i + 1 < res.size()) {
-            avoid_edges.emplace_back(res[i], res[i+1]);
+
+    if (includeNode == -1 && avoidNodes.empty() && avoid_edges.empty()) {
+        out << "BestDrivingRoute:";
+
+        res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
+
+        for (int i = 0; i < res.size(); i++) {
+            if (i + 1 < res.size()) {
+                avoid_edges.emplace_back(res[i], res[i+1]);
+            }
+            out << res[i] << (i == res.size() - 1 ? "" : ",");
         }
-        out << res[i] << (i == res.size() - 1 ? "" : ",");
-    }
-    out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+        out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-    /*res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
+        res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
-    out << "AlternativeDrivingRoute:";
-    if (graph.findVertex(destination)->getDist() == INF) {
-        out << "none" << endl;
+        out << "AlternativeDrivingRoute:";
+        if (graph.findVertex(destination)->getDist() == INF) {
+            out << "none" << endl;
+        }
+        else {
+            for (int i = 0; i < res2.size(); i++) out << res2[i] << (i == res2.size() - 1 ? "" : ",");
+            out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+        }
     }
     else {
-        for (int i = 0; i < res2.size(); i++) out << res2[i] << (i == res2.size() - 1 ? "" : ",");
-        out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
-    }*/
+        out << "RestrictedDrivingRoute:";
+
+        if (includeNode == -1) {
+            res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
+
+            if (graph.findVertex(destination)->getDist() == INF) {
+                out << "none" << '\n';
+            } else {
+                for (int i = 0; i < res.size(); i++) {
+                    if (i + 1 < res.size()) {
+                        avoid_edges.emplace_back(res[i], res[i+1]);
+                    }
+                    out << res[i] << (i == res.size() - 1 ? "" : ",");
+                }
+                out << "(" << graph.findVertex(destination)->getDist() << ")" << '\n';
+            }
+        }
+        else {
+            res = bestPath(&graph, source, includeNode, mode, false, avoidNodes, avoid_edges);
+            double includeDist = graph.findVertex(includeNode)->getDist();
+            if (includeDist != INF) {
+                res2 = bestPath(&graph, includeNode, destination, mode, true, avoidNodes, avoid_edges);
+
+                if (graph.findVertex(destination)->getDist() != INF) {
+
+                    for (int i = 0; i < res.size(); i++) {
+                        out << res[i] << ",";
+                    }
+                    for (int i = 1; i < res2.size(); i++) {
+                        out << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                    }
+                    out << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << '\n';
+
+                } else out << "none" << '\n';
+            }
+            else out << "none" << '\n';
+        }
+    }
+
 
     out.close();
 
