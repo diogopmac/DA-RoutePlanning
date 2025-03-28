@@ -240,6 +240,27 @@ int Menu::getIncludeNode() {
     return includeNode;
 }
 
+void Menu::displayInformationDriving(const int &source, const int &destination, const std::vector<int> &res, std::vector<std::pair<int, int>> &avoid_edges,
+    const bool &alternative, const std::string &message) {
+    if (!alternative) {
+        cout << "Source:" << graph.findVertex(source)->getID() << endl;
+        cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
+    }
+    cout << message;
+    if (graph.findVertex(destination)->getDist() == INF) {
+        cout << "none" << endl;
+    }
+    for (int i = 0; i < res.size(); i++) {
+        if (!alternative) {
+            if (i + 1 < res.size()) {
+                avoid_edges.emplace_back(res[i], res[i+1]);
+            }
+        }
+        cout << res[i] << (i == res.size() - 1 ? "" : ",");
+    }
+    cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+}
+
 void Menu::MainMenu() {
     int option;
     readGraph();
@@ -293,27 +314,11 @@ void Menu::DefaultMenu() {
 
     res = bestPath(&graph, source, destination, mode);
 
-    cout << "Source:" << graph.findVertex(source)->getID() << endl;
-    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
-    cout << "BestDrivingRoute:";
-    for (int i = 0; i < res.size(); i++) {
-        if (i + 1 < res.size()) {
-            avoid_edges.emplace_back(res[i], res[i+1]);
-        }
-        cout << res[i] << (i == res.size() - 1 ? "" : ",");
-    }
-    cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+    displayInformationDriving(source, destination, res, avoid_edges, false, "BestDrivingRoute: ");
 
     res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
-    cout << "AlternativeDrivingRoute:";
-    if (graph.findVertex(destination)->getDist() == INF) {
-        cout << "none" << endl;
-    }
-    else {
-        for (int i = 0; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
-        cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
-    }
+    displayInformationDriving(source, destination, res2, avoid_edges, true, "AlternativeDrivingRoute: ");
 }
 
 void Menu::RestrictedMenu() {

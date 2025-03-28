@@ -29,6 +29,7 @@ public:
     std::string getTransportationMode();
     void getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<std::pair<int, int>> &avoid_edges);
     int getIncludeNode();
+    void displayInformationDriving(const int &source, const int &destination, const std::vector<int> &res, std::vector<std::pair<int, int>> &avoid_edges, const bool &alternative, const std::string &message);
 
     std::vector<int> reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible);
     std::vector<int> bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
