@@ -465,17 +465,26 @@ void Menu::MenuDrivingWalking() {
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
-    cout << "DrivingRoute:";
-    for (int i = 0; i < res.first.path.size(); i++) {
-        cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
-    } cout << "(" << res.first.weight << ")" << endl;
-    cout << "ParkingNode:" << res.second.path[0] << endl;
-    cout << "WalkingRoute:";
-    for (int i = 0; i < res.second.path.size(); i++) {
-        cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
-    } cout << "(" << res.second.weight << ")" << endl;
-    cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
-
+    if (message.empty()) {
+        cout << "DrivingRoute:";
+        for (int i = 0; i < res.first.path.size(); i++) {
+            cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.first.weight << ")" << endl;
+        cout << "ParkingNode:" << res.second.path[0] << endl;
+        cout << "WalkingRoute:";
+        for (int i = 0; i < res.second.path.size(); i++) {
+            cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.second.weight << ")" << endl;
+        cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
+    }
+    else {
+        cout << "DrivingRoute:" << endl;
+        cout << "ParkingNode:" << endl;
+        cout << "WalkingRoute:" << endl;
+        cout << "TotalTime:" << endl;
+        if (message == "walking-time") cout << "No possible route with max. walking time of " << maxWalking << " minutes." << endl;
+        else if (message == "no-parking") cout << "No parking found." << endl;
+    }
 }
 
 
