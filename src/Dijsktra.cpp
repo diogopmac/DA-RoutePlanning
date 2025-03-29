@@ -120,6 +120,7 @@ std::pair<std::pair<Path, Path>, std::pair<Path, Path>> Dijkstra::bestPathDriveW
     }
 
     double lowest = INF;
+    double lowestAlt = INF;
     double walkTime = 0;
     bool valid_walkTime = false;
     dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
@@ -133,15 +134,20 @@ std::pair<std::pair<Path, Path>, std::pair<Path, Path>> Dijkstra::bestPathDriveW
         auto p = reconstructPath(g, end, v->getID(), false);
 
         if (!p.empty()) {
-            if (v->getDist() + paths[v->getID()].weight < lowest ||
-                (v->getDist() + paths[v->getID()].weight == lowest && v->getDist() > walkTime)) {
+            double pathWeight = v->getDist() + paths[v->getID()].weight;
+            if ((pathWeight < lowest) || (pathWeight == lowest && v->getDist() > walkTime)) {
 
+                lowestAlt = lowest;
                 lowest = v->getDist() + paths[v->getID()].weight;
                 walkTime = v->getDist();
                 res2 = res;
                 res.first = paths[v->getID()];
                 res.second = {p, v->getDist()};
-
+            }
+            else if (pathWeight < lowestAlt) {
+                lowestAlt = v->getDist() + paths[v->getID()].weight;
+                res2.first = paths[v->getID()];
+                res2.second = {p, v->getDist()};
             }
         }
     }
