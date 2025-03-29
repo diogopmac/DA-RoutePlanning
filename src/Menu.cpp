@@ -10,143 +10,9 @@
 #include <sstream>
 
 #include "../headers/DataReader.h"
+#include "../headers/Dijsktra.h"
 
 using namespace std;
-
-
-bool Menu::relax(Edge<int> *e) {
-    if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
-
-    e->getDest()->setDist(e->getOrig()->getDist() + e->getWeight());
-    e->getDest()->setPath(e);
-    return true;
-}
-
-void Menu::dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode,
-                    const bool alternative, const vector<int> &avoid_nodes, const vector<pair<int,int>> &avoid_edges) {
-    vector<Edge<int> *> edges_to_revert;
-
-    for (auto v : g->getVertexSet()) {
-        v->setDist(INF);
-        v->setPath(nullptr);
-        if (!alternative) v->setVisited(false);
-    }
-
-    for (auto node : avoid_nodes) {
-        g->findVertex(node)->setVisited(true);
-    }
-
-    for (auto edge : avoid_edges) {
-        auto e = g->findVertex(edge.first)->findEdge(edge.second);
-        e->setAvoid(true);
-        edges_to_revert.push_back(e);
-    }
-
-    auto s = g->findVertex(start);
-    s->setDist(0);
-
-    MutablePriorityQueue<Vertex<int>> q;
-    q.insert(s);
-    while (!q.empty()) {
-        auto v = q.extractMin();
-        for (auto e : v->getAdj()) {
-            if (e->getLabel() == transportation_mode && !e->getDest()->isVisited() && !e->shouldAvoid()) {
-                auto dist_old = e->getDest()->getDist();
-                if (relax(e)) {
-                    if (dist_old == INF) {
-                        q.insert(e->getDest());
-                    } else {
-                        q.decreaseKey(e->getDest());
-                    }
-                }
-            }
-        }
-    }
-    for (auto e : edges_to_revert) {
-        e->setAvoid(false);
-    }
-}
-
-std::vector<int> Menu::reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible=true) {
-    std::vector<int> res;
-
-    auto v = g->findVertex(end);
-    if (v == nullptr || v->getDist() == INF) return res;
-
-    res.push_back(v->getID());
-    while (v->getPath() != nullptr) {
-        v = v->getPath()->getOrig();
-        v->setVisited(true);
-        res.push_back(v->getID());
-    }
-
-    if (reversible) reverse(res.begin(), res.end());
-    if (res.empty() || (reversible ? res[0] : res.back()) != g->findVertex(start)->getID()) {
-        std::cout << res[0] << std::endl;
-        std::cout << g->findVertex(start)->getID() << std::endl;
-        for (auto r : res) std::cout << r << " ";
-        std::cout << "ERROR: Origin not found!" << std::endl;
-    }
-    return res;
-}
-
-std::vector<int> Menu::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
-    dijkstra(g, start, transportation_mode, alternative, avoid_nodes, avoid_edges);
-    return reconstructPath(g, start, end);
-}
-
-std::pair<Path, Path> Menu::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
-                                const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
-    std::map<int, Path> paths;
-    std::pair<Path, Path> res;
-    dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
-    for (auto v : g->getVertexSet()) {
-        if (!v->getParking()) continue;
-        if (v->getID() == start) continue;
-        if (v->getID() == end) continue;
-
-        auto p = reconstructPath(g, start, v->getID());
-
-        if (!p.empty()) {
-            paths[v->getID()] = {p, v->getDist()};
-        }
-    }
-    if (paths.empty()) {
-        message = "no-parking";
-        return res;
-    }
-    
-    double lowest = INF;
-    double walkTime = 0;
-    bool valid_walkTime = false;
-    dijkstra(g, end, "walking", alternative, avoid_nodes, avoid_edges);
-    for (auto v : g->getVertexSet()) {
-        if (!v->getParking()) continue;
-        if (v->getID() == start) continue;
-        if (v->getID() == end) continue;
-        if (v->getDist() > max_walking) continue;
-        valid_walkTime = true;
-
-        auto p = reconstructPath(g, end, v->getID(), false);
-
-        if (!p.empty()) {
-            if (v->getDist() + paths[v->getID()].weight < lowest ||
-                (v->getDist() + paths[v->getID()].weight == lowest && v->getDist() > walkTime)) {
-
-                lowest = v->getDist() + paths[v->getID()].weight;
-                walkTime = v->getDist();
-                res.first = paths[v->getID()];
-                res.second = {p, v->getDist()};
-
-            }
-        }
-    }
-    if (!valid_walkTime) {
-        message = "walking-time";
-    }
-    return res;
-}
 
 Menu::Menu() = default;
 
@@ -312,11 +178,11 @@ void Menu::DefaultMenu() {
     source = getIntValue("Enter Source: ", true);
     destination = getIntValue("Enter Destination: ", true);
 
-    res = bestPath(&graph, source, destination, mode);
+    res = dijkstra.bestPath(&graph, source, destination, mode);
 
     displayInformationDriving(source, destination, res, avoid_edges, false, "BestDrivingRoute:");
 
-    res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
+    res2 = dijkstra.bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
     displayInformationDriving(source, destination, res2, avoid_edges, true, "AlternativeDrivingRoute:");
 }
@@ -341,15 +207,15 @@ void Menu::RestrictedMenu() {
     includeNode = getIncludeNode();
 
     if (includeNode == -1) {
-        res = bestPath(&graph, source, destination, mode, false, avoid_nodes, avoid_edges);
+        res = dijkstra.bestPath(&graph, source, destination, mode, false, avoid_nodes, avoid_edges);
         displayInformationDriving(source, destination, res, avoid_edges, false, "RestrictedDrivingRoute:");
     }
     else {
         cout << "RestrictedDrivingRoute:";
-        res = bestPath(&graph, source, includeNode, mode, false, avoid_nodes, avoid_edges);
+        res = dijkstra.bestPath(&graph, source, includeNode, mode, false, avoid_nodes, avoid_edges);
         double includeDist = graph.findVertex(includeNode)->getDist();
         if (includeDist != INF) {
-            res2 = bestPath(&graph, includeNode, destination, mode, true, avoid_nodes, avoid_edges);
+            res2 = dijkstra.bestPath(&graph, includeNode, destination, mode, true, avoid_nodes, avoid_edges);
             if (graph.findVertex(destination)->getDist() != INF) {
                 for (int i = 0; i < res.size(); i++) cout << res[i] << ",";
                 for (int i = 1; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
@@ -372,7 +238,7 @@ void Menu::MenuDrivingWalking() {
     maxWalking = getIntValue("Enter Max Walking Time: ", false);
     getRestrictedParameters(avoid_nodes, avoid_edges);
 
-    res = bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
+    res = dijkstra.bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -421,7 +287,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     if (includeNode == -1 && avoidNodes.empty() && avoid_edges.empty()) {
         out << "BestDrivingRoute:";
 
-        res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
+        res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
 
         for (int i = 0; i < res.size(); i++) {
             if (i + 1 < res.size()) {
@@ -431,7 +297,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
         }
         out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-        res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
+        res2 = dijkstra.bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
         out << "AlternativeDrivingRoute:";
         if (graph.findVertex(destination)->getDist() == INF) {
@@ -446,7 +312,7 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
         out << "RestrictedDrivingRoute:";
 
         if (includeNode == -1) {
-            res = bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
+            res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
 
             if (graph.findVertex(destination)->getDist() == INF) {
                 out << "none" << '\n';
@@ -461,10 +327,10 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
             }
         }
         else {
-            res = bestPath(&graph, source, includeNode, mode, false, avoidNodes, avoid_edges);
+            res = dijkstra.bestPath(&graph, source, includeNode, mode, false, avoidNodes, avoid_edges);
             double includeDist = graph.findVertex(includeNode)->getDist();
             if (includeDist != INF) {
-                res2 = bestPath(&graph, includeNode, destination, mode, true, avoidNodes, avoid_edges);
+                res2 = dijkstra.bestPath(&graph, includeNode, destination, mode, true, avoidNodes, avoid_edges);
 
                 if (graph.findVertex(destination)->getDist() != INF) {
 

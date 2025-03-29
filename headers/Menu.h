@@ -6,17 +6,14 @@
 #define MENU_H
 #include "graph.h"
 #include "DataReader.h"
+#include "Dijsktra.h"
 #include <string>
-
-struct Path {
-    std::vector<int> path;
-    double weight;
-};
 
 class Menu {
 private:
     Graph<int> graph;
     DataReader reader;
+    Dijkstra dijkstra;
 public:
     Menu();
     void MainMenu();
@@ -24,18 +21,14 @@ public:
     void RestrictedMenu();
     void MenuBatchMode(const std::string& inFile, const std::string& outFile);
     void MenuDrivingWalking();
+
     void readGraph();
+
     int getIntValue(const std::string &s, const bool &node);
     std::string getTransportationMode();
     void getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<std::pair<int, int>> &avoid_edges);
     int getIncludeNode();
     void displayInformationDriving(const int &source, const int &destination, const std::vector<int> &res, std::vector<std::pair<int, int>> &avoid_edges, const bool &alternative, const std::string &message);
-
-    std::vector<int> reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible);
-    std::vector<int> bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
-    std::pair<Path, Path> bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, int max_walking, std::string &message, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
-    void dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode, bool alternative, const std::vector<int> &avoid_nodes, const std::vector<std::pair<int, int>> &avoid_edges);
-    bool relax(Edge<int> *e);
 };
 
 
