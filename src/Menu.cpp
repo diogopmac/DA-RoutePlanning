@@ -228,7 +228,6 @@ void Menu::RestrictedMenu() {
 
 void Menu::MenuDrivingWalking() {
     int source, destination, maxWalking;
-    pair<Path, Path> res;
     vector<int> avoid_nodes;
     vector<pair<int,int>> avoid_edges;
     string message;
@@ -238,7 +237,7 @@ void Menu::MenuDrivingWalking() {
     maxWalking = getIntValue("Enter Max Walking Time: ", false);
     getRestrictedParameters(avoid_nodes, avoid_edges);
 
-    res = dijkstra.bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
+    auto [res, res2] = dijkstra.bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoid_nodes, avoid_edges);
 
     cout << "Source:" << graph.findVertex(source)->getID() << endl;
     cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
@@ -255,12 +254,30 @@ void Menu::MenuDrivingWalking() {
         cout << "TotalTime:" << res.first.weight + res.second.weight << endl;
     }
     else {
-        cout << "DrivingRoute:" << endl;
-        cout << "ParkingNode:" << endl;
-        cout << "WalkingRoute:" << endl;
-        cout << "TotalTime:" << endl;
         if (message == "walking-time") cout << "No possible route with max. walking time of " << maxWalking << " minutes." << endl;
         else if (message == "no-parking") cout << "No parking found." << endl;
+
+        cout << "DrivingRoute1:";
+        for (int i = 0; i < res.first.path.size(); i++) {
+            cout << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.first.weight << ")" << endl;
+        cout << "ParkingNode1:" << res.second.path[0] << endl;
+        cout << "WalkingRoute1:";
+        for (int i = 0; i < res.second.path.size(); i++) {
+            cout << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+        } cout << "(" << res.second.weight << ")" << endl;
+        cout << "TotalTime1:" << res.first.weight + res.second.weight << endl;
+
+        cout << "DrivingRoute2:";
+        for (int i = 0; i < res2.first.path.size(); i++) {
+            cout << res2.first.path[i] << (i == res2.first.path.size() - 1 ? "" : ",");
+        } cout << "(" << res2.first.weight << ")" << endl;
+        cout << "ParkingNode2:" << res2.second.path[0] << endl;
+        cout << "WalkingRoute2:";
+        for (int i = 0; i < res2.second.path.size(); i++) {
+            cout << res2.second.path[i] << (i == res2.second.path.size() - 1 ? "" : ",");
+        } cout << "(" << res2.second.weight << ")" << endl;
+        cout << "TotalTime2:" << res2.first.weight + res2.second.weight << endl;
     }
 }
 
