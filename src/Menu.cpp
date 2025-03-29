@@ -284,9 +284,6 @@ void Menu::MenuDrivingWalking() {
 
 
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
-    vector<int> res;
-    vector<int> res2;
-
     ofstream out(outFile);
 
     string mode;
@@ -294,80 +291,124 @@ void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     int includeNode = -1;
     vector<int> avoidNodes;
     vector<pair<int,int>> avoid_edges;
+    string message;
+    int maxWalking;
 
     DataReader reader = DataReader();
-    reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode);
+    reader.readInputFile(inFile, mode, source, destination, avoidNodes, avoid_edges, includeNode, maxWalking);
 
     out << "Source:" << graph.findVertex(source)->getID() << '\n';
     out << "Destination:" << graph.findVertex(destination)->getID() << '\n';
+    if (mode != "driving-walking") {
+        vector<int> res;
+        vector<int> res2;
+        if (includeNode == -1 && avoidNodes.empty() && avoid_edges.empty()) {
+            out << "BestDrivingRoute:";
 
-    if (includeNode == -1 && avoidNodes.empty() && avoid_edges.empty()) {
-        out << "BestDrivingRoute:";
+            res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
 
-        res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
-
-        for (int i = 0; i < res.size(); i++) {
-            if (i + 1 < res.size()) {
-                avoid_edges.emplace_back(res[i], res[i+1]);
+            for (int i = 0; i < res.size(); i++) {
+                if (i + 1 < res.size()) {
+                    avoid_edges.emplace_back(res[i], res[i+1]);
+                }
+                out << res[i] << (i == res.size() - 1 ? "" : ",");
             }
-            out << res[i] << (i == res.size() - 1 ? "" : ",");
-        }
-        out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+            out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 
-        res2 = dijkstra.bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
+            res2 = dijkstra.bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
-        out << "AlternativeDrivingRoute:";
-        if (graph.findVertex(destination)->getDist() == INF) {
-            out << "none" << endl;
+            out << "AlternativeDrivingRoute:";
+            if (graph.findVertex(destination)->getDist() == INF) {
+                out << "none" << endl;
+            }
+            else {
+                for (int i = 0; i < res2.size(); i++) out << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+            }
         }
         else {
-            for (int i = 0; i < res2.size(); i++) out << res2[i] << (i == res2.size() - 1 ? "" : ",");
-            out << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
+            out << "RestrictedDrivingRoute:";
+
+            if (includeNode == -1) {
+                res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
+
+                if (graph.findVertex(destination)->getDist() == INF) {
+                    out << "none" << '\n';
+                } else {
+                    for (int i = 0; i < res.size(); i++) {
+                        if (i + 1 < res.size()) {
+                            avoid_edges.emplace_back(res[i], res[i+1]);
+                        }
+                        out << res[i] << (i == res.size() - 1 ? "" : ",");
+                    }
+                    out << "(" << graph.findVertex(destination)->getDist() << ")" << '\n';
+                }
+            }
+            else {
+                res = dijkstra.bestPath(&graph, source, includeNode, mode, false, avoidNodes, avoid_edges);
+                double includeDist = graph.findVertex(includeNode)->getDist();
+                if (includeDist != INF) {
+                    res2 = dijkstra.bestPath(&graph, includeNode, destination, mode, true, avoidNodes, avoid_edges);
+
+                    if (graph.findVertex(destination)->getDist() != INF) {
+
+                        for (int i = 0; i < res.size(); i++) {
+                            out << res[i] << ",";
+                        }
+                        for (int i = 1; i < res2.size(); i++) {
+                            out << res2[i] << (i == res2.size() - 1 ? "" : ",");
+                        }
+                        out << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << '\n';
+
+                    } else out << "none" << '\n';
+                }
+                else out << "none" << '\n';
+            }
         }
     }
     else {
-        out << "RestrictedDrivingRoute:";
+        auto [res, res2] = dijkstra.bestPathDriveWalk(&graph, source, destination, maxWalking, message, false, avoidNodes, avoid_edges);
 
-        if (includeNode == -1) {
-            res = dijkstra.bestPath(&graph, source, destination, mode, false, avoidNodes, avoid_edges);
-
-            if (graph.findVertex(destination)->getDist() == INF) {
-                out << "none" << '\n';
-            } else {
-                for (int i = 0; i < res.size(); i++) {
-                    if (i + 1 < res.size()) {
-                        avoid_edges.emplace_back(res[i], res[i+1]);
-                    }
-                    out << res[i] << (i == res.size() - 1 ? "" : ",");
-                }
-                out << "(" << graph.findVertex(destination)->getDist() << ")" << '\n';
-            }
+        if (message.empty()) {
+            out << "DrivingRoute:";
+            for (int i = 0; i < res.first.path.size(); i++) {
+                out << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+            } out << "(" << res.first.weight << ")" << '\n';
+            out << "ParkingNode:" << res.second.path[0] << '\n';
+            out << "WalkingRoute:";
+            for (int i = 0; i < res.second.path.size(); i++) {
+                out << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+            } out << "(" << res.second.weight << ")" << '\n';
+            out << "TotalTime:" << res.first.weight + res.second.weight << '\n';
         }
         else {
-            res = dijkstra.bestPath(&graph, source, includeNode, mode, false, avoidNodes, avoid_edges);
-            double includeDist = graph.findVertex(includeNode)->getDist();
-            if (includeDist != INF) {
-                res2 = dijkstra.bestPath(&graph, includeNode, destination, mode, true, avoidNodes, avoid_edges);
+            if (message == "walking-time") out << "No possible route with max. walking time of " << maxWalking << " minutes." << '\n';
+            else if (message == "no-parking") out << "No parking found." << '\n';
 
-                if (graph.findVertex(destination)->getDist() != INF) {
+            out << "DrivingRoute1:";
+            for (int i = 0; i < res.first.path.size(); i++) {
+                out << res.first.path[i] << (i == res.first.path.size() - 1 ? "" : ",");
+            } out << "(" << res.first.weight << ")" << '\n';
+            out << "ParkingNode1:" << res.second.path[0] << '\n';
+            out << "WalkingRoute1:";
+            for (int i = 0; i < res.second.path.size(); i++) {
+                out << res.second.path[i] << (i == res.second.path.size() - 1 ? "" : ",");
+            } out << "(" << res.second.weight << ")" << '\n';
+            out << "TotalTime1:" << res.first.weight + res.second.weight << '\n';
 
-                    for (int i = 0; i < res.size(); i++) {
-                        out << res[i] << ",";
-                    }
-                    for (int i = 1; i < res2.size(); i++) {
-                        out << res2[i] << (i == res2.size() - 1 ? "" : ",");
-                    }
-                    out << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << '\n';
-
-                } else out << "none" << '\n';
-            }
-            else out << "none" << '\n';
+            out << "DrivingRoute2:";
+            for (int i = 0; i < res2.first.path.size(); i++) {
+                out << res2.first.path[i] << (i == res2.first.path.size() - 1 ? "" : ",");
+            } out << "(" << res2.first.weight << ")" << '\n';
+            out << "ParkingNode2:" << res2.second.path[0] << '\n';
+            out << "WalkingRoute2:";
+            for (int i = 0; i < res2.second.path.size(); i++) {
+                out << res2.second.path[i] << (i == res2.second.path.size() - 1 ? "" : ",");
+            } out << "(" << res2.second.weight << ")" << '\n';
+            out << "TotalTime2:" << res2.first.weight + res2.second.weight << '\n';
         }
     }
-
-
     out.close();
-
 }
 
 
