@@ -250,15 +250,15 @@ void Menu::displayInformationDriving(const int &source, const int &destination, 
     if (graph.findVertex(destination)->getDist() == INF) {
         cout << "none" << endl;
     }
-    for (int i = 0; i < res.size(); i++) {
-        if (!alternative) {
-            if (i + 1 < res.size()) {
-                avoid_edges.emplace_back(res[i], res[i+1]);
+    else {
+        for (int i = 0; i < res.size(); i++) {
+            if (!alternative) {
+                if (i + 1 < res.size()) avoid_edges.emplace_back(res[i], res[i+1]);
             }
+            cout << res[i] << (i == res.size() - 1 ? "" : ",");
         }
-        cout << res[i] << (i == res.size() - 1 ? "" : ",");
+        cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
     }
-    cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
 }
 
 void Menu::MainMenu() {
@@ -314,11 +314,11 @@ void Menu::DefaultMenu() {
 
     res = bestPath(&graph, source, destination, mode);
 
-    displayInformationDriving(source, destination, res, avoid_edges, false, "BestDrivingRoute: ");
+    displayInformationDriving(source, destination, res, avoid_edges, false, "BestDrivingRoute:");
 
     res2 = bestPath(&graph, source, destination, mode, true, {}, avoid_edges);
 
-    displayInformationDriving(source, destination, res2, avoid_edges, true, "AlternativeDrivingRoute: ");
+    displayInformationDriving(source, destination, res2, avoid_edges, true, "AlternativeDrivingRoute:");
 }
 
 void Menu::RestrictedMenu() {
@@ -340,41 +340,20 @@ void Menu::RestrictedMenu() {
     getRestrictedParameters(avoid_nodes, avoid_edges);
     includeNode = getIncludeNode();
 
-    cout << "Source:" << graph.findVertex(source)->getID() << endl;
-    cout << "Destination:" << graph.findVertex(destination)->getID() << endl;
-    cout << "RestrictedDrivingRoute:";
-
     if (includeNode == -1) {
         res = bestPath(&graph, source, destination, mode, false, avoid_nodes, avoid_edges);
-
-        if (graph.findVertex(destination)->getDist() == INF) {
-            cout << "none" << endl;
-        } else {
-            for (int i = 0; i < res.size(); i++) {
-                if (i + 1 < res.size()) {
-                    avoid_edges.emplace_back(res[i], res[i+1]);
-                }
-                cout << res[i] << (i == res.size() - 1 ? "" : ",");
-            }
-            cout << "(" << graph.findVertex(destination)->getDist() << ")" << endl;
-        }
+        displayInformationDriving(source, destination, res, avoid_edges, false, "RestrictedDrivingRoute:");
     }
     else {
+        cout << "RestrictedDrivingRoute:";
         res = bestPath(&graph, source, includeNode, mode, false, avoid_nodes, avoid_edges);
         double includeDist = graph.findVertex(includeNode)->getDist();
         if (includeDist != INF) {
             res2 = bestPath(&graph, includeNode, destination, mode, true, avoid_nodes, avoid_edges);
-
             if (graph.findVertex(destination)->getDist() != INF) {
-
-                for (int i = 0; i < res.size(); i++) {
-                    cout << res[i] << ",";
-                }
-                for (int i = 1; i < res2.size(); i++) {
-                    cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
-                }
+                for (int i = 0; i < res.size(); i++) cout << res[i] << ",";
+                for (int i = 1; i < res2.size(); i++) cout << res2[i] << (i == res2.size() - 1 ? "" : ",");
                 cout << "(" << includeDist + graph.findVertex(destination)->getDist() << ")" << endl;
-
             } else cout << "none" << endl;
         }
         else cout << "none" << endl;
