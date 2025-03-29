@@ -94,10 +94,10 @@ std::vector<int> Dijkstra::bestPath(Graph<int> *g, const int &start, const int &
     return reconstructPath(g, start, end);
 }
 
-std::pair<Path, Path> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
+std::pair<std::pair<Path, Path>, std::pair<Path, Path>> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
     std::map<int, Path> paths;
-    std::pair<Path, Path> res;
+    std::pair<Path, Path> res, res2;
     dijkstra(g, start, "driving", alternative, avoid_nodes, avoid_edges);
     for (auto v : g->getVertexSet()) {
         if (!v->getParking()) continue;
@@ -112,7 +112,11 @@ std::pair<Path, Path> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &star
     }
     if (paths.empty()) {
         message = "no-parking";
-        return res;
+        if (max_walking == INF) {
+            message = "no-parking-alternative";
+            return {res, res2};
+        }
+        return bestPathDriveWalk(g, start, end, INF, message);
     }
 
     double lowest = INF;
@@ -134,6 +138,7 @@ std::pair<Path, Path> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &star
 
                 lowest = v->getDist() + paths[v->getID()].weight;
                 walkTime = v->getDist();
+                res2 = res;
                 res.first = paths[v->getID()];
                 res.second = {p, v->getDist()};
 
@@ -142,7 +147,12 @@ std::pair<Path, Path> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &star
     }
     if (!valid_walkTime) {
         message = "walking-time";
+        if (max_walking == INF) {
+            message = "walking-time-alternative";
+            return {res, res2};
+        }
+        return bestPathDriveWalk(g, start, end, INF, message);
     }
-    return res;
+    return {res, res2};
 }
 
