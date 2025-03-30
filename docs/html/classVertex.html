@@ -225,6 +225,15 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Constructs a <a class="el" href="classVertex.html">Vertex</a> object. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the location. </td></tr>
+    <tr><td class="paramname">id</td><td>The unique identifier of the location. </td></tr>
+    <tr><td class="paramname">code</td><td>The code of the location. </td></tr>
+    <tr><td class="paramname">parking</td><td>Bool that indicates if the location has parking or not. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -262,6 +271,15 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Adds an outgoing edge to the vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>The destination vertex. </td></tr>
+    <tr><td class="paramname">distance</td><td>The weight of the edge. </td></tr>
+    <tr><td class="paramname">label</td><td>The label of the edge. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the newly created edge. </dd></dl>
 
 </div>
 </div>
@@ -290,6 +308,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Deletes an edge and removes it from the incoming list of the destination vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">edge</td><td>The edge to delete. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -310,6 +334,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Finds an edge to a given destination vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dest</td><td>The ID of the destination vertex. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the edge if found, <code>nullptr</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -329,6 +360,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the outgoing edges of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>A vector of pointers to the outgoing edges. </dd></dl>
 
 </div>
 </div>
@@ -348,6 +380,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the code of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>The code of the vertex. </dd></dl>
 
 </div>
 </div>
@@ -367,6 +400,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the distance of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>The distance of the vertex. </dd></dl>
 
 </div>
 </div>
@@ -386,6 +420,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the ID of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>The ID of the vertex. </dd></dl>
 
 </div>
 </div>
@@ -405,6 +440,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the incoming edges of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>A vector of pointers to the incoming edges. </dd></dl>
 
 </div>
 </div>
@@ -424,6 +460,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the indegree of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>The indegree of the vertex. </dd></dl>
 
 </div>
 </div>
@@ -443,6 +480,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the name of the vertex. </p><dl class="section return"><dt>Returns</dt><dd>The name of the vertex. </dd></dl>
 
 </div>
 </div>
@@ -462,6 +500,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Checks if the vertex has parking or not. </p><dl class="section return"><dt>Returns</dt><dd><code>true</code> if it has parking, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -481,6 +520,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the path edge leading to the vertex. </p><dl class="section return"><dt>Returns</dt><dd>A pointer to the path edge. </dd></dl>
 
 </div>
 </div>
@@ -500,6 +540,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Checks if the vertex is being processed. </p><dl class="section return"><dt>Returns</dt><dd><code>true</code> if processing, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -519,6 +560,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Checks if the vertex has been visited. </p><dl class="section return"><dt>Returns</dt><dd><code>true</code> if visited, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -539,6 +581,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Compares two vertices based on their distance. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vertex</td><td>The vertex to compare with. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if this vertex has a smaller distance, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -559,6 +608,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Removes an outgoing edge to a given destination vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The ID of the destination vertex. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the edge was removed, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -578,6 +634,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Removes all outgoing edges of the vertex. </p>
 
 </div>
 </div>
@@ -598,6 +655,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the distance of the vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dist</td><td>The new distance value. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -618,6 +681,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the indegree of the vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indegree</td><td>The new indegree value. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -638,6 +707,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the path edge leading to this vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>A pointer to the new path edge. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -658,6 +733,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the processing status of the vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">processing</td><td>The new processing status. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -678,6 +759,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the visited status of the vertex. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">visited</td><td>The new visited status. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

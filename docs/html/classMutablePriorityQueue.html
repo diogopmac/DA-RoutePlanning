@@ -127,10 +127,7 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a28cece6545bdc0df529e7878ad2c3ad4" id="r_a28cece6545bdc0df529e7878ad2c3ad4"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classEdge.html">T</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMutablePriorityQueue.html#a28cece6545bdc0df529e7878ad2c3ad4">H</a></td></tr>
 <tr class="separator:a28cece6545bdc0df529e7878ad2c3ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="classEdge.html">T</a>&gt;<br />
-class MutablePriorityQueue&lt; T &gt;</div><p>class T must have: (i) accessible field int queueIndex; (ii) operator&lt; defined. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aba8ebedcbe659f2680bac229cfaca526" name="aba8ebedcbe659f2680bac229cfaca526"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aba8ebedcbe659f2680bac229cfaca526">&#9670;&#160;</a></span>MutablePriorityQueue()</h2>
 
@@ -147,6 +144,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Constructs an empty <a class="el" href="classMutablePriorityQueue.html">MutablePriorityQueue</a>. </p>
 
 </div>
 </div>
@@ -168,6 +166,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Decreases the priority of an element and restores the heap property. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Pointer to the element whose priority is decreased. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -187,6 +191,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Checks if the priority queue is empty. </p><dl class="section return"><dt>Returns</dt><dd><code>true</code> if the queue is empty, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -206,6 +211,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Extracts and removes the element with the smallest priority from the queue. </p><dl class="section return"><dt>Returns</dt><dd>Pointer to the element with the smallest priority. </dd></dl>
 
 </div>
 </div>
@@ -234,6 +240,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Performs the heapify-down operation on the mutable priority queue, ensuring the heap property is maintained. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The index of the element to start the heapify-down operation. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -262,6 +274,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Performs the heapify-up operation on the mutable priority queue, ensuring the heap property is maintained. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The index of the element to start the heapify-up operation. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -282,6 +300,12 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Inserts an element into the priority queue. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Pointer to the element to be inserted. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

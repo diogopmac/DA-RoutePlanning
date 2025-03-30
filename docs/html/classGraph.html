@@ -150,6 +150,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Destructor for the <a class="el" href="classGraph.html">Graph</a> class. </p>
 
 </div>
 </div>
@@ -193,6 +194,16 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Adds a bidirectional edge to the graph. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The content of the source vertex. </td></tr>
+    <tr><td class="paramname">dest</td><td>The content of the destination vertex. </td></tr>
+    <tr><td class="paramname">distance</td><td>The weight of the edge. </td></tr>
+    <tr><td class="paramname">label</td><td>The label of the edge. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the edge was added successfully, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -235,6 +246,16 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Adds a vertex with a given content to the graph. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the location. </td></tr>
+    <tr><td class="paramname">id</td><td>The unique identifier of the location. </td></tr>
+    <tr><td class="paramname">code</td><td>The code of the location. </td></tr>
+    <tr><td class="paramname">hasParking</td><td>Bool that indicates if the location has parking. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the vertex was added successfully, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -275,6 +296,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Finds a vertex with a given content. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The content of the vertex to find. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the vertex if found, <code>nullptr</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -303,6 +331,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Finds the index of the vertex with a given content. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The content of the vertex to find. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The index of the vertex if found, <code>-1</code> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -322,6 +357,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the number of vertices in the graph. </p><dl class="section return"><dt>Returns</dt><dd>The number of vertices. </dd></dl>
 
 </div>
 </div>
@@ -341,6 +377,7 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Gets the set of vertices in the graph. </p><dl class="section return"><dt>Returns</dt><dd>A vector of pointers to the vertices. </dd></dl>
 
 </div>
 </div>
@@ -361,6 +398,13 @@ template&lt;<a class="el" href="classEdge.html">class</a> <a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Removes a vertex with a given content from the graph. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The content of the vertex to find. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the vertex was removed successfully, <code>false</code> otherwise. </dd></dl>
 
 </div>
 </div>
