@@ -14,14 +14,10 @@
 
 using namespace std;
 
-/**
- * Constructor for the Menu class.
- */
+
 Menu::Menu() = default;
 
-/**
- * Reads the graph data from files.
- */
+
 void Menu::readGraph() {
     DataReader reader = DataReader();
     /*
@@ -33,12 +29,7 @@ void Menu::readGraph() {
     reader.readDistances("../docs/DisSample.csv", graph);
 }
 
-/**
- * Gets an integer value from user input.
- * @param s The message prompt for the user.
- * @param node Boolean value that indicates whether to check for valid node.
- * @return The integer input validated.
- */
+
 int Menu::getIntValue(const string &s, const bool &node) {
     int ret;
     while (true) {
@@ -59,10 +50,7 @@ int Menu::getIntValue(const string &s, const bool &node) {
     return ret;
 }
 
-/**
- * Gets the transportation mode from user input.
- * @return A string representing the selected transportation mode.
- */
+
 std::string Menu::getTransportationMode() {
     std::string mode;
     while (mode != "driving" && mode != "walking") {
@@ -74,11 +62,7 @@ std::string Menu::getTransportationMode() {
     return mode;
 }
 
-/**
- * Gets restricted route parameters from user input.
- * @param avoid_nodes Reference to a vector of avoiding nodes.
- * @param avoid_edges Reference to a vector of avoiding edges.
- */
+
 void Menu::getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<std::pair<int, int>> &avoid_edges) {
     cout << "Enter Avoiding Nodes: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -108,10 +92,7 @@ void Menu::getRestrictedParameters(std::vector<int> &avoid_nodes, std::vector<st
     }
 }
 
-/**
- * Gets a node that must be included in the path.
- * @return The node to be included or -1 if no node was specified.
- */
+
 int Menu::getIncludeNode() {
     int includeNode;
     string input;
@@ -131,15 +112,7 @@ int Menu::getIncludeNode() {
     return includeNode;
 }
 
-/**
- * Displays information about the driving route.
- * @param source Source node.
- * @param destination Destination node.
- * @param res Route result vector.
- * @param avoid_edges Edges to be avoided.
- * @param alternative Boolean indication if it is an alternative route or not
- * @param message Message to be displayed
- */
+
 void Menu::displayInformationDriving(const int &source, const int &destination, const std::vector<int> &res, std::vector<std::pair<int, int>> &avoid_edges,
     const bool &alternative, const std::string &message) {
     if (!alternative) {
@@ -161,9 +134,7 @@ void Menu::displayInformationDriving(const int &source, const int &destination, 
     }
 }
 
-/**
- * Displays the main menu and processes user input choices.
- */
+
 void Menu::MainMenu() {
     int option;
     readGraph();
@@ -204,9 +175,7 @@ void Menu::MainMenu() {
     } while (option != 5);
 }
 
-/**
- * Displays the default route planning menu and processes user input.
- */
+
 void Menu::DefaultMenu() {
     string mode;
     int source, destination;
@@ -227,9 +196,7 @@ void Menu::DefaultMenu() {
     displayInformationDriving(source, destination, res2, avoid_edges, true, "AlternativeDrivingRoute:");
 }
 
-/**
- * Displays the restricted route planning menu and processes user input.
- */
+
 void Menu::RestrictedMenu() {
     string mode;
     int source, destination;
@@ -269,9 +236,7 @@ void Menu::RestrictedMenu() {
     }
 }
 
-/**
- * Displays the driving-walking mode menu and processes user input.
- */
+
 void Menu::MenuDrivingWalking() {
     int source, destination, maxWalking;
     vector<int> avoid_nodes;
@@ -327,11 +292,7 @@ void Menu::MenuDrivingWalking() {
     }
 }
 
-/**
- * Processes batch mode operations from input file and writes output to file.
- * @param inFile Path to input file.
- * @param outFile Path to output file.
- */
+
 void Menu::MenuBatchMode(const string& inFile, const string& outFile) {
     ofstream out(outFile);
 
