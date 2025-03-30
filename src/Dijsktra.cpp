@@ -1,7 +1,3 @@
-//
-// Created by diogo on 29/03/2025.
-//
-
 #include "../headers/Dijsktra.h"
 
 #include <climits>
@@ -35,7 +31,7 @@ void Dijkstra::dijkstra(Graph<int> *g, const int &start, const std::string &tran
     }
 
     for (auto edge : avoid_edges) {
-        auto e = g->findVertex(edge.first)->findEdge(edge.second);
+        auto e = g->findVertex(edge.first)->findEdge(edge.second, transportation_mode);
         e->setAvoid(true);
         edges_to_revert.push_back(e);
     }

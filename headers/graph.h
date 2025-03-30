@@ -61,7 +61,7 @@ public:
     * @param dest The ID of the destination vertex.
     * @return A pointer to the edge if found, `nullptr` otherwise.
     */
-    Edge<T> * findEdge(int dest);
+    Edge<T> * findEdge(int dest, const std::string &mode);
     /**
      * Gets the outgoing edges of the vertex.
      * @return A vector of pointers to the outgoing edges.
@@ -404,9 +404,9 @@ bool Vertex<T>::getParking() const {
 }
 
 template <class T>
-Edge<T> * Vertex<T>::findEdge(const int dest) {
+Edge<T> * Vertex<T>::findEdge(const int dest, const std::string &mode) {
     for (auto e : this->adj) {
-        if (e->getDest()->getID() == dest) {
+        if (e->getDest()->getID() == dest && e->getLabel()== mode) {
             return e;
         }
     }

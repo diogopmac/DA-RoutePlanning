@@ -1,7 +1,3 @@
-//
-// Created by diogo on 11/03/2025.
-//
-
 #include <fstream>
 #include <sstream>
 #include "../headers/DataReader.h"
