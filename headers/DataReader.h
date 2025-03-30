@@ -1,7 +1,3 @@
-//
-// Created by diogo on 11/03/2025.
-//
-
 #ifndef DATAREADER_H
 #define DATAREADER_H
 #include <string>

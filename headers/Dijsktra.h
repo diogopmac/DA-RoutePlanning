@@ -77,7 +77,7 @@ class Dijkstra {
         /**
         * Relaxes an edge in the graph updating the destination vertex's distance and path is shorter path is found.
         * @param e Pointer to the edge to be relaxed
-        * @return True if edge was relaxed, false otherwise
+        * @return `true` if edge was relaxed, `false` otherwise
         * @note Time Complexity:
         * - O(1) in all cases.
         */

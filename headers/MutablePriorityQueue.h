@@ -11,10 +11,6 @@
 
 #include <vector>
 
-/**
- * class T must have: (i) accessible field int queueIndex; (ii) operator< defined.
- */
-
 template <class T>
 class MutablePriorityQueue {
     std::vector<T *> H;
@@ -22,10 +18,31 @@ class MutablePriorityQueue {
     void heapifyDown(unsigned i);
     inline void set(unsigned i, T * x);
 public:
+    /**
+     * Constructs an empty MutablePriorityQueue.
+     */
     MutablePriorityQueue();
+    /**
+     * Inserts an element into the priority queue.
+     * @param x Pointer to the element to be inserted.
+     */
     void insert(T * x);
+    /**
+     * Extracts and removes the element with the smallest priority from the queue.
+     * @return Pointer to the element with the smallest priority.
+     */
     T * extractMin();
+
+    /**
+     * Decreases the priority of an element and restores the heap property.
+     * @param x Pointer to the element whose priority is decreased.
+     */
     void decreaseKey(T * x);
+
+    /**
+     * Checks if the priority queue is empty.
+     * @return `true` if the queue is empty, `false` otherwise.
+     */
     bool empty();
 };
 
@@ -66,6 +83,10 @@ void MutablePriorityQueue<T>::decreaseKey(T *x) {
     heapifyUp(x->queueIndex);
 }
 
+/**
+ * Performs the heapify-up operation on the mutable priority queue, ensuring the heap property is maintained.
+ * @param i The index of the element to start the heapify-up operation.
+ */
 template <class T>
 void MutablePriorityQueue<T>::heapifyUp(unsigned i) {
     auto x = H[i];
@@ -76,6 +97,10 @@ void MutablePriorityQueue<T>::heapifyUp(unsigned i) {
     set(i, x);
 }
 
+/**
+ * Performs the heapify-down operation on the mutable priority queue, ensuring the heap property is maintained.
+ * @param i The index of the element to start the heapify-down operation.
+ */
 template <class T>
 void MutablePriorityQueue<T>::heapifyDown(unsigned i) {
     auto x = H[i];
