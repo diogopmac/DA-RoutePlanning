@@ -16,6 +16,7 @@ using namespace std;
  * Relaxes an edge in the graph updating the destination vertex's distance and path is shorter path is found.
  * @param e Pointer to the edge to be relaxed
  * @return True if edge was relaxed, false otherwise
+ * @complexity O(1) in all cases.
  */
 bool Dijkstra::relax(Edge<int> *e) {
     if (e->getOrig()->getDist() + e->getWeight() >= e->getDest()->getDist()) return false;
@@ -33,6 +34,10 @@ bool Dijkstra::relax(Edge<int> *e) {
  * @param alternative Boolean value indicating if an alternative route is needed or not.
  * @param avoid_nodes List of nodes to avoid.
  * @param avoid_edges List of edges to avoid.
+ * @complexity
+ * - Best-case: O(V log V) if there are no edges.
+ * - Average-case: O((V + E) log V) in a typical graph.
+ * - Worst-case: O((V + E) log V) in a fully connected graph.
  */
 void Dijkstra::dijkstra(Graph<int> *g, const int &start, const std::string &transportation_mode,
                     const bool alternative, const vector<int> &avoid_nodes, const vector<pair<int,int>> &avoid_edges) {
@@ -86,6 +91,10 @@ void Dijkstra::dijkstra(Graph<int> *g, const int &start, const std::string &tran
  * @param end Ending node (destination).
  * @param reversible Boolean value that indicates if path should be reversible.
  * @return Vector containing the sequence of nodes in the shortest path.
+ * @complexity
+ * - Best-case: O(1) if the destination node is unreachable.
+ * - Average-case: O(V) when reconstructing a typical path.
+ * - Worst-case: O(V) if the graph is a single long path.
  */
 std::vector<int> Dijkstra::reconstructPath(Graph<int> *g, const int &start, const int &end, const bool reversible=true) {
     std::vector<int> res;
@@ -120,6 +129,10 @@ std::vector<int> Dijkstra::reconstructPath(Graph<int> *g, const int &start, cons
  * @param avoid_nodes List of nodes to avoid.
  * @param avoid_edges List of edges to avoid.
  * @return Vector containing the best path between the nodes.
+ * @complexity
+ * - Best-case: O(V log V) if the graph has no edges.
+ * - Average-case: O((V + E) log V) in a typical graph.
+ * - Worst-case: O((V + E) log V) in a fully connected graph.
  */
 std::vector<int> Dijkstra::bestPath(Graph<int> *g, const int &start, const int &end, const std::string &transportation_mode,
                                 const bool alternative, const vector<int> &avoid_nodes, const vector<pair<int,int>> &avoid_edges) {
@@ -138,6 +151,10 @@ std::vector<int> Dijkstra::bestPath(Graph<int> *g, const int &start, const int &
  * @param avoid_nodes List of nodes to avoid.
  * @param avoid_edges List of edges to avoid.
  * @return Pair of paths representing the driving and walking routes.
+ * @note Time Complexity
+ * - Best-case: O((V + E) log V) if a parking spot is found quickly.
+ * - Average-case: O((V + E) log V + P V), where P is the number of parking nodes (it is significantly smaller than V).
+ * - Worst-case: O((V + E) log V + V^2) if every node is a parking node.
  */
 std::pair<std::pair<Path, Path>, std::pair<Path, Path>> Dijkstra::bestPathDriveWalk(Graph<int> *g, const int &start, const int &end, const int max_walking, std::string &message,
                                 const bool alternative=false, const vector<int> &avoid_nodes={}, const vector<pair<int,int>> &avoid_edges={}) {
