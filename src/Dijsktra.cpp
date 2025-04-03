@@ -31,9 +31,19 @@ void Dijkstra::dijkstra(Graph<int> *g, const int &start, const std::string &tran
     }
 
     for (auto edge : avoid_edges) {
+        Vertex<int> *v = g->findVertex(edge.first);
+        auto e_driving = v->findEdge(edge.second, "drving");
+        auto e_walk = v->findEdge(edge.second, "walking");
+        /*
         auto e = g->findVertex(edge.first)->findEdge(edge.second, transportation_mode);
-        e->setAvoid(true);
-        edges_to_revert.push_back(e);
+        */
+        if (e_driving != nullptr) {
+            e_driving->setAvoid(true);
+            edges_to_revert.push_back(e_driving);
+        }
+        e_walk->setAvoid(true);
+
+        edges_to_revert.push_back(e_walk);
     }
 
     auto s = g->findVertex(start);

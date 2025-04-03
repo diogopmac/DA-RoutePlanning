@@ -17,13 +17,14 @@ Menu::Menu() = default;
 
 void Menu::readGraph() {
     DataReader reader = DataReader();
-    /*
     reader.readLocations("../docs/Locations.csv", graph);
     reader.readDistances("../docs/Distances.csv", graph);
-    */
 
+    /*
     reader.readLocations("../docs/LocSample.csv", graph);
     reader.readDistances("../docs/DisSample.csv", graph);
+    */
+
 }
 
 
